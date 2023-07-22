@@ -1,0 +1,5 @@
+Please create an application using Streamlit and Langchain
+We want 3 files, one for three different kinds of Langchain agents
+Each agent should have its own system and human prompts (you can use generic language in them for now)
+Then, please create a 4th file that imports the three agents and creates a Dialogue Simulator class that triggers each of the three agents to speak in a loop
+The output of this conveersation should be viewable in a Streamlit UI
