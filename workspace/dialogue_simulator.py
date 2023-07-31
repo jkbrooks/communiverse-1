@@ -1,17 +1,45 @@
-from general_agent import GeneralAgent
-from technical_agent import TechnicalAgent
-from customer_service_agent import CustomerServiceAgent
+
+from typing import Callable, List
+from dialogue_agent import DialogueAgent
+
 
 class DialogueSimulator:
-    def __init__(self):
-        self.general_agent = GeneralAgent()
-        self.technical_agent = TechnicalAgent()
-        self.customer_service_agent = CustomerServiceAgent()
+    def __init__(
+        self,
+        agents: List[DialogueAgent],
+        selection_function: Callable[[int, List[DialogueAgent]], int],
+    ) -> None:
+        self.agents = agents
+        self._step = 0
+        self.select_next_speaker = selection_function
+     
+    def reset(self):
+        for agent in self.agents:
+            agent.reset()
+    
+    def inject(self, name: str, message: str):
+        """
+        Initiates the conversation with a {message} from {name}
+        """
+        for agent in self.agents:
+            agent.receive(name, message)
 
-    def start_conversation(self):
-        # Start the conversation loop
-        context = ""
-        while True:
-            context = self.general_agent.speak(context)
-            context = self.technical_agent.speak(context)
-            context = self.customer_service_agent.speak(context)
+        # increment time
+        self._step += 1
+
+    def step(self) -> tuple[str, str]:
+        # 1. choose the next speaker
+        speaker_idx = self.select_next_speaker(self._step, self.agents)
+        speaker = self.agents[speaker_idx]
+
+        # 2. next speaker sends message
+        message = speaker.send()
+
+        # 3. everyone receives message
+        for receiver in self.agents:
+            receiver.receive(speaker.name, message)
+
+        # 4. increment time
+        self._step += 1
+
+        return speaker.name, message
