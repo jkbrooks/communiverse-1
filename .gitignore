@@ -9,6 +9,6 @@ node_modules
 # Ignore files related to API keys
 .env
 
-__pycache__
+__pycache__/
 
 venv

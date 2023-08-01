@@ -2,7 +2,7 @@ from langchain.schema import SystemMessage
 from langchain import PromptTemplate
 from typing import Any
 
-from dialogue_agent import DialogueAgent
+from workspace.dialogue_agent import DialogueAgent
 
 class BiddingDialogueAgent(DialogueAgent):
     def __init__(

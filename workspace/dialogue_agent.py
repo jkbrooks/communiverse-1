@@ -20,7 +20,7 @@ class DialogueAgent:
         self.model = model
         self.prefix = f"{self.name}: "
         self.reset()
-
+    
     def reset(self):
         self.message_history = ["Here is the conversation so far."]
     
@@ -36,7 +36,7 @@ class DialogueAgent:
             ]
         )
         return message.content
-
+    
     def receive(self, name: str, message: str) -> None:
         """
         Concatenates {message} spoken by {name} into message history

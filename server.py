@@ -1,14 +1,18 @@
+import streamlit as st
+
 from langchain.schema import (
     HumanMessage,
     SystemMessage)
 from langchain.chat_models import ChatOpenAI
 from dotenv import load_dotenv
+import time
 
-from dialogue_simulator import DialogueSimulator
-from character_generator import CharacterGenerator
-from bidding_dialogue_agent import BiddingDialogueAgent
-from speaker import Speaker
-from settings import TOPIC_TEMPLATE, PLAYER_DESCRIPTOR_TEMPLATE, GAME_DESCRIPTION_TEMPLATE
+
+from workspace.dialogue_simulator import DialogueSimulator
+from workspace.character_generator import CharacterGenerator
+from workspace.bidding_dialogue_agent import BiddingDialogueAgent
+from workspace.speaker import Speaker
+from workspace.settings import TOPIC_TEMPLATE, PLAYER_DESCRIPTOR_TEMPLATE, GAME_DESCRIPTION_TEMPLATE
 
 
 def main():
@@ -48,23 +52,51 @@ def main():
                 name=character_name,
                 system_message=character_system_message,
                 model=ChatOpenAI(temperature=0.2),
-                bidding_template=bidding_template,
+                bidding_template=bidding_template
             )
         )
 
-    max_iters = 10
-    n = 0
-
-    simulator = DialogueSimulator(agents=characters, 
+    simulator = DialogueSimulator(agents=characters,
                                     selection_function=speaker.select_next_speaker)
     simulator.reset()
+    
+    st.title("Chat")
 
-    while n < max_iters:
-        name, message = simulator.step()
-        print(f"({name}): {message}")
-        print("\n")
-        n += 1
+    if "messages" not in st.session_state:
+        st.session_state.messages = []
+    
+    for message in st.session_state.messages:
+        with st.chat_message(message["role"]):
+            st.markdown(message["content"])
 
+    if prompt := st.chat_input("Enter your message here"):
+        
+        st.session_state.messages.append({"role": "user", "content": prompt})
+        
+        with st.chat_message("user"):
+            st.markdown(prompt)
+
+            simulator.inject("user", prompt)
+
+        names, assistant_responses = simulator.step()
+
+        for name, assistant_response in zip(names, assistant_responses):
+            with st.chat_message(name):
+                message_placeholder = st.empty()
+                full_response = ""
+                
+                
+                for chunk in assistant_response.split():
+                    full_response += chunk + " "
+                    time.sleep(0.05)
+                    
+                    message_placeholder.markdown(full_response + "▌")
+
+                message_placeholder.markdown(full_response)
+
+            st.session_state.messages.append({"role": name,
+                                            "content": full_response})
+        
 
 if __name__ == "__main__":
     main()

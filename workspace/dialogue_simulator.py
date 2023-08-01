@@ -1,6 +1,6 @@
 
 from typing import Callable, List
-from dialogue_agent import DialogueAgent
+from workspace.dialogue_agent import DialogueAgent
 
 
 class DialogueSimulator:
@@ -27,19 +27,25 @@ class DialogueSimulator:
         # increment time
         self._step += 1
 
-    def step(self) -> tuple[str, str]:
+    def step(self):
         # 1. choose the next speaker
         speaker_idx = self.select_next_speaker(self._step, self.agents)
-        speaker = self.agents[speaker_idx]
+        messages = []
+        speakers = []
+        for idx in speaker_idx:
+            speaker = self.agents[idx]
 
-        # 2. next speaker sends message
-        message = speaker.send()
+            # 2. next speaker sends message
+            message = speaker.send()
 
-        # 3. everyone receives message
-        for receiver in self.agents:
-            receiver.receive(speaker.name, message)
+            messages.append(message)
+            speakers.append(speaker.name)
 
-        # 4. increment time
-        self._step += 1
+            # 3. everyone receives message
+            for receiver in self.agents:
+                receiver.receive(speaker.name, message)
+            
+            # 4. increment time
+            self._step += 1
 
-        return speaker.name, message
+        return speakers, messages

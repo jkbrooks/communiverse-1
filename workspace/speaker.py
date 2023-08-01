@@ -1,8 +1,8 @@
 import tenacity
 import numpy as np
 from typing import List
-from bidding_dialogue_agent import DialogueAgent
-from bid_output_parser import BidOutputParser
+from workspace.bidding_dialogue_agent import DialogueAgent
+from workspace.bid_output_parser import BidOutputParser
 
 class Speaker(BidOutputParser):
 
@@ -21,18 +21,18 @@ class Speaker(BidOutputParser):
         Ask for agent bid and parses the bid into the correct format.
         """
         bid_string = agent.bid()
-        bid = int(self.bid_parser.parse(bid_string)["bid"])
+        bid = int(self.parse(bid_string)["bid"])
         return bid
     
-    def select_next_speaker(self, step: int, agents: List[DialogueAgent]) -> int:
+    def select_next_speaker(self, step: int, agents: List[DialogueAgent]) -> list:
         bids = []
         for agent in agents:
             bid = self.ask_for_bid(agent)
             bids.append(bid)
 
         max_value = np.max(bids)
-        max_indices = np.where(bids == max_value)[0]
-        idx = np.random.choice(max_indices)
 
-        return idx
+        max_indices = [index for index, num in enumerate(bids) if num == max_value]
+
+        return max_indices
     

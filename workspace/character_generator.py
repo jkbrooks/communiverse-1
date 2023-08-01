@@ -5,7 +5,7 @@ from langchain.chat_models import ChatOpenAI
 
 from typing import Any
 
-from settings import CHARACTER_DESCRIPTION_TEMPLATE, CHARACTER_HEADER_TEMPLATE,\
+from workspace.settings import CHARACTER_DESCRIPTION_TEMPLATE, CHARACTER_HEADER_TEMPLATE,\
                         SYSTEM_MESSAGE_TEMPLATE
 
 
@@ -47,7 +47,7 @@ class CharacterGenerator():
 
             self.character_headers.append(CHARACTER_HEADER_TEMPLATE.format(
                         character_name=self.character_names[i],
-                        topic=self.topic,
+                        game_description=self.game_description,
                         character_description = self.character_descriptions[i]
                     ))
     
@@ -58,7 +58,6 @@ class CharacterGenerator():
                 content=(SYSTEM_MESSAGE_TEMPLATE.format(
                         character_name=self.character_names[i],
                         word_limit=self.word_limit,
-                        topic = self.topic,
                         character_header = self.character_headers[i]
                     )
                 )

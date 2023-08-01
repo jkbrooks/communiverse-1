@@ -1,40 +1,69 @@
-import streamlit as st
-import SearchAgent
+from langchain.schema import (
+    HumanMessage,
+    SystemMessage)
+from langchain.chat_models import ChatOpenAI
 from dotenv import load_dotenv
 
-# from langchain.agents import initialize_agent, AgentType
-from langchain.callbacks import StreamlitCallbackHandler
-# from langchain.chat_models import ChatOpenAI
-# from langchain.tools import DuckDuckGoSearchRun
+from workspace.dialogue_simulator import DialogueSimulator
+from workspace.character_generator import CharacterGenerator
+from workspace.bidding_dialogue_agent import BiddingDialogueAgent
+from workspace.speaker import Speaker
+from workspace.settings import TOPIC_TEMPLATE, PLAYER_DESCRIPTOR_TEMPLATE, GAME_DESCRIPTION_TEMPLATE
+
 
 def main():
     load_dotenv()
+
+    character_names = ["Willie Dustice", "Kevin Nogilny", "Ray McScriff"]
+    topic = TOPIC_TEMPLATE
+    word_limit = 50
+
+    formatted_character_names = ', '.join(character_names)
+    game_description = GAME_DESCRIPTION_TEMPLATE.format(
+                        character_names=formatted_character_names)
     
-    st.title("Main Conversation")
+    player_descriptor_system_message = SystemMessage(
+        content=PLAYER_DESCRIPTOR_TEMPLATE
+    )
 
-    """
-    In this example, we're using `StreamlitCallbackHandler` to display the thoughts and actions of an agent in an interactive Streamlit app.
-    Try more LangChain 🤝 Streamlit Agent examples at [github.com/langchain-ai/streamlit-agent](https://github.com/langchain-ai/streamlit-agent).
-    """
+    character_generator = CharacterGenerator(character_names, topic, word_limit, 
+                                             player_descriptor_system_message, 
+                                             game_description)
+    
+    character_generator.generate_character_description()
+    character_generator.generate_character_header()
+    character_generator.generate_character_system_message()
 
-    if "messages" not in st.session_state:
-        st.session_state["messages"] = [
-            {"role": "assistant", "content": "Hi, I'm a chatbot who can search the web. How can I help you?"}
-        ]
+    speaker = Speaker()
+    character_bidding_templates = speaker\
+                        .generate_character_bidding_template(character_generator.character_headers)
 
-    for msg in st.session_state.messages:
-        st.chat_message(msg["role"]).write(msg["content"])
+    characters = []
+    for character_name, character_system_message, bidding_template in zip(
+        character_names, character_generator.character_system_messages, 
+        character_bidding_templates
+    ):
+        characters.append(
+            BiddingDialogueAgent(
+                name=character_name,
+                system_message=character_system_message,
+                model=ChatOpenAI(temperature=0.2),
+                bidding_template=bidding_template,
+            )
+        )
+    
+    max_iters = 10
+    n = 0
 
-    if prompt := st.chat_input():
-        st.session_state.messages.append({"role": "user", "content": prompt})
-        st.chat_message("user").write(prompt)
+    simulator = DialogueSimulator(agents=characters, 
+                                    selection_function=speaker.select_next_speaker)
+    simulator.reset()
 
-        search_agent = SearchAgent()
-        with st.chat_message("assistant"):
-            st_cb = StreamlitCallbackHandler(st.container(), expand_new_thoughts=False)
-            response = search_agent.run(st.session_state.messages, callbacks=[st_cb])
-            st.session_state.messages.append({"role": "assistant", "content": response})
-            st.write(response)
+    while n < max_iters:
+        name, message = simulator.step()
+        print(f"({name}): {message}")
+        print("\n")
+        n += 1
 
 
 if __name__ == "__main__":
