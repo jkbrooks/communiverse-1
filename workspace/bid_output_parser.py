@@ -10,10 +10,10 @@ class BidOutputParser(RegexParser):
         return """Your response should be an integer delimited by angled brackets, 
         like this: <int>."""
     
-    def generate_character_bidding_template(self, character_header:list)->list:
+    def generate_agent_bidding_template(self, agent_header:list)->list:
         bidding_templates = []
 
-        for header in character_header:
+        for header in agent_header:
             
             bidding_templates.append(
                 f"""{header}
