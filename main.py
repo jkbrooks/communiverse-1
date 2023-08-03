@@ -5,48 +5,48 @@ from langchain.chat_models import ChatOpenAI
 from dotenv import load_dotenv
 
 from workspace.dialogue_simulator import DialogueSimulator
-from workspace.character_generator import CharacterGenerator
+from workspace.agent_generator import AgentGenerator
 from workspace.bidding_dialogue_agent import BiddingDialogueAgent
 from workspace.speaker import Speaker
-from workspace.settings import TOPIC_TEMPLATE, PLAYER_DESCRIPTOR_TEMPLATE, GAME_DESCRIPTION_TEMPLATE
+from workspace.settings import TOPIC_TEMPLATE, AGENT_DESCRIPTOR_TEMPLATE, CHAT_DESCRIPTION_TEMPLATE
 
 
 def main():
     load_dotenv()
 
-    character_names = ["Willie Dustice", "Kevin Nogilny", "Ray McScriff"]
+    agent_names = ["Willie Dustice", "Kevin Nogilny", "Ray McScriff"]
     topic = TOPIC_TEMPLATE
     word_limit = 50
 
-    formatted_character_names = ', '.join(character_names)
-    game_description = GAME_DESCRIPTION_TEMPLATE.format(
-                        character_names=formatted_character_names)
+    formatted_agent_names = ', '.join(agent_names)
+    chat_description = CHAT_DESCRIPTION_TEMPLATE.format(
+                        agent_names=formatted_agent_names)
     
-    player_descriptor_system_message = SystemMessage(
-        content=PLAYER_DESCRIPTOR_TEMPLATE
+    agent_descriptor_system_message = SystemMessage(
+        content=AGENT_DESCRIPTOR_TEMPLATE
     )
 
-    character_generator = CharacterGenerator(character_names, topic, word_limit, 
-                                             player_descriptor_system_message, 
-                                             game_description)
+    agent_generator = AgentGenerator(agent_names, topic, word_limit, 
+                                             agent_descriptor_system_message, 
+                                             chat_description)
     
-    character_generator.generate_character_description()
-    character_generator.generate_character_header()
-    character_generator.generate_character_system_message()
+    agent_generator.generate_agent_description()
+    agent_generator.generate_agent_header()
+    agent_generator.generate_agent_system_message()
 
     speaker = Speaker()
-    character_bidding_templates = speaker\
-                        .generate_character_bidding_template(character_generator.character_headers)
+    agent_bidding_templates = speaker\
+                        .generate_agent_bidding_template(agent_generator.agent_headers)
 
-    characters = []
-    for character_name, character_system_message, bidding_template in zip(
-        character_names, character_generator.character_system_messages, 
-        character_bidding_templates
+    agents = []
+    for agent_name, agent_system_message, bidding_template in zip(
+        agent_names, agent_generator.agent_system_messages, 
+        agent_bidding_templates
     ):
-        characters.append(
+        agents.append(
             BiddingDialogueAgent(
-                name=character_name,
-                system_message=character_system_message,
+                name=agent_name,
+                system_message=agent_system_message,
                 model=ChatOpenAI(temperature=0.2),
                 bidding_template=bidding_template,
             )
@@ -55,7 +55,7 @@ def main():
     max_iters = 3
     n = 0
 
-    simulator = DialogueSimulator(agents=characters, 
+    simulator = DialogueSimulator(agents=agents, 
                                     selection_function=speaker.select_next_speaker)
     simulator.reset()
 
