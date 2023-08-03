@@ -14,9 +14,6 @@ from workspace.bidding_dialogue_agent import BiddingDialogueAgent
 from workspace.speaker import Speaker
 from workspace.settings import TOPIC_TEMPLATE, PLAYER_DESCRIPTOR_TEMPLATE, GAME_DESCRIPTION_TEMPLATE
 
-import langchain
-langchain.verbose = False
-
 
 def main():
     load_dotenv()
@@ -40,7 +37,7 @@ def main():
     character_generator.generate_character_description()
     character_generator.generate_character_header()
     character_generator.generate_character_system_message()
-
+    
     speaker = Speaker()
     character_bidding_templates = speaker\
                         .generate_character_bidding_template(character_generator.character_headers)
@@ -64,7 +61,7 @@ def main():
     simulator.reset()
     
     st.title("Chat")
-    
+
     if "messages" not in st.session_state:
         st.session_state.messages = []
 
