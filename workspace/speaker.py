@@ -29,7 +29,7 @@ class Speaker(BidOutputParser):
         for agent in agents:
             bid = self.ask_for_bid(agent)
             bids.append(bid)
-
+        
         max_value = np.max(bids)
 
         max_indices = [index for index, num in enumerate(bids) if num == max_value]

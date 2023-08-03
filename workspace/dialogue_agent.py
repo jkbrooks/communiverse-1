@@ -6,7 +6,7 @@ from langchain.schema import (
 )
 
 from typing import Any
-
+from workspace.conversational_memory import ConversationMemory
 
 class DialogueAgent:
     def __init__(
@@ -19,6 +19,7 @@ class DialogueAgent:
         self.system_message = system_message
         self.model = model
         self.prefix = f"{self.name}: "
+        self.memory = ConversationMemory()
         self.reset()
     
     def reset(self):
@@ -37,8 +38,18 @@ class DialogueAgent:
         )
         return message.content
     
+    def set_history(self, history: list) -> None:
+        self.message_history = history
+    
     def receive(self, name: str, message: str) -> None:
         """
         Concatenates {message} spoken by {name} into message history
         """
         self.message_history.append(f"{name}: {message}")
+
+        # with open('conversation.txt', 'a') as f:
+        #     f.write("New iteration\n")
+        #     for line in self.message_history:
+        #         f.write(f"{line}\n")
+
+        #     f.write("\n\n")

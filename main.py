@@ -52,14 +52,19 @@ def main():
             )
         )
     
-    max_iters = 10
+    max_iters = 3
     n = 0
 
     simulator = DialogueSimulator(agents=characters, 
                                     selection_function=speaker.select_next_speaker)
     simulator.reset()
 
+    prompts = ['hello, my name is Slava, could you tell me your names', 
+               'How are you doing guys?',
+               'Could you tell me my name']
+
     while n < max_iters:
+        simulator.inject("user", prompts[n])
         name, message = simulator.step()
         print(f"({name}): {message}")
         print("\n")

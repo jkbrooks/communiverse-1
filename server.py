@@ -3,16 +3,19 @@ import streamlit as st
 from langchain.schema import (
     HumanMessage,
     SystemMessage)
+
 from langchain.chat_models import ChatOpenAI
 from dotenv import load_dotenv
 import time
-
 
 from workspace.dialogue_simulator import DialogueSimulator
 from workspace.character_generator import CharacterGenerator
 from workspace.bidding_dialogue_agent import BiddingDialogueAgent
 from workspace.speaker import Speaker
 from workspace.settings import TOPIC_TEMPLATE, PLAYER_DESCRIPTOR_TEMPLATE, GAME_DESCRIPTION_TEMPLATE
+
+import langchain
+langchain.verbose = False
 
 
 def main():
@@ -55,21 +58,27 @@ def main():
                 bidding_template=bidding_template
             )
         )
-
+    
     simulator = DialogueSimulator(agents=characters,
                                     selection_function=speaker.select_next_speaker)
     simulator.reset()
     
     st.title("Chat")
-
+    
     if "messages" not in st.session_state:
         st.session_state.messages = []
+
+    if 'agent_memory' not in st.session_state:
+        st.session_state['agent_memory'] = ["Here is the conversation so far."]
     
     for message in st.session_state.messages:
         with st.chat_message(message["role"]):
             st.markdown(message["content"])
 
     if prompt := st.chat_input("Enter your message here"):
+        simulator.inject_history(st.session_state['agent_memory'])
+
+        st.session_state['agent_memory'].append(f"user: {prompt}")
         
         st.session_state.messages.append({"role": "user", "content": prompt})
         
@@ -85,6 +94,29 @@ def main():
                 message_placeholder = st.empty()
                 full_response = ""
                 
+                for chunk in assistant_response.split():
+                    full_response += chunk + " "
+                    time.sleep(0.05)
+                    
+                    message_placeholder.markdown(full_response + "▌")
+
+                message_placeholder.markdown(full_response)
+
+            st.session_state.messages.append({"role": name,
+                                            "content": full_response})
+            
+            st.session_state['agent_memory'].append(f"{name}: {full_response}")
+
+
+    if st.button('Run conversation'):
+        simulator.inject_history(st.session_state['agent_memory'])
+
+        names, assistant_responses = simulator.step()
+
+        for name, assistant_response in zip(names, assistant_responses):
+            with st.chat_message(name):
+                message_placeholder = st.empty()
+                full_response = ""
                 
                 for chunk in assistant_response.split():
                     full_response += chunk + " "
@@ -96,7 +128,8 @@ def main():
 
             st.session_state.messages.append({"role": name,
                                             "content": full_response})
-        
-
+            
+            st.session_state['agent_memory'].append(f"{name}: {full_response}")
+ 
 if __name__ == "__main__":
     main()

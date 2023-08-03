@@ -16,7 +16,13 @@ class DialogueSimulator:
     def reset(self):
         for agent in self.agents:
             agent.reset()
+
+
+    def inject_history(self, history: list):
+        for agent in self.agents:
+            agent.set_history(history)
     
+
     def inject(self, name: str, message: str):
         """
         Initiates the conversation with a {message} from {name}
@@ -47,5 +53,5 @@ class DialogueSimulator:
             
             # 4. increment time
             self._step += 1
-
+        
         return speakers, messages
