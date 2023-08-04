@@ -34,7 +34,7 @@ def main():
     
     agent = DialogueAgent(name = agent_names[0], 
                             system_message = system_message,
-                            model = ChatOpenAI(temperature=0.2)
+                            model = ChatOpenAI(temperature=0.2, model="gpt-3.5-turbo-16k")
                             )
 
     simulator = DialogueSimulator(agents= [agent], 
