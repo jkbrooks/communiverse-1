@@ -33,7 +33,7 @@ def main():
     agent_generator.generate_agent_description()
     agent_generator.generate_agent_header()
     agent_generator.generate_agent_system_message()
-
+    
     speaker = Speaker()
     agent_bidding_templates = speaker\
                         .generate_agent_bidding_template(agent_generator.agent_headers)

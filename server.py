@@ -1,7 +1,6 @@
 import streamlit as st
 
 from langchain.schema import (
-    HumanMessage,
     SystemMessage)
 
 from langchain.chat_models import ChatOpenAI
@@ -12,53 +11,34 @@ from workspace.dialogue_simulator import DialogueSimulator
 from workspace.agent_generator import AgentGenerator
 from workspace.bidding_dialogue_agent import BiddingDialogueAgent
 from workspace.speaker import Speaker
-from workspace.settings import TOPIC_TEMPLATE, AGENT_DESCRIPTOR_TEMPLATE, CHAT_DESCRIPTION_TEMPLATE, ACTION_PLAN_PROPOSER_AGENT_DESCRIPTION_TEMPLATE
+from workspace.dialogue_agent import DialogueAgent
+from workspace.settings import TOPIC_TEMPLATE, AGENT_DESCRIPTOR_TEMPLATE
+from workspace.prompts.action_plan_prompt import ACTION_PLAN_PROPOSER_HEADER_TEMPLATE, ACTION_PLAN_PROPOSER_SYSTEM_MESSAGE_TEMPLATE
 
 
 def main():
     load_dotenv()
 
-    agent_names = ["Action Plan Proposer", "Commander Bob", "Commander Alice", "Discussant Emmanuel", "Discussant Peterson"]
-    topic = TOPIC_TEMPLATE
-    word_limit = 1000
+    agent_names = ["Action Plan Proposer"]
 
-    formatted_agent_names = ', '.join(agent_names)
-    chat_description = CHAT_DESCRIPTION_TEMPLATE.format(
-                        agent_names=formatted_agent_names)
+    word_limit = 500
     
-    agent_descriptor_system_message = SystemMessage(
-        content=AGENT_DESCRIPTOR_TEMPLATE
-    )
-
-    agent_generator = AgentGenerator(agent_names, topic, word_limit, 
-                                             agent_descriptor_system_message, 
-                                             chat_description)
+    system_message = SystemMessage(
+        content= ACTION_PLAN_PROPOSER_SYSTEM_MESSAGE_TEMPLATE.format(
+                                                agent_name = agent_names[0],
+                                                agent_header = ACTION_PLAN_PROPOSER_HEADER_TEMPLATE,
+                                                word_limit = word_limit) 
+                                                ) 
     
-    character_generator.generate_character_description()
-    character_generator.generate_character_header()
-    character_generator.generate_character_system_message()
+    # agent_description -> agent_header -> agent_system
+    
+    agent = DialogueAgent(name = agent_names[0], 
+                            system_message = system_message,
+                            model = ChatOpenAI(temperature=0.2)
+                            )
 
-    speaker = Speaker()
-    agent_bidding_templates = speaker\
-                        .generate_agent_bidding_template(agent_generator.agent_headers)
-
-    agents = []
-
-    for agent_name, agent_system_message, bidding_template in zip(
-        agent_names, agent_generator.agent_system_messages, 
-        agent_bidding_templates
-    ):
-        agents.append(
-            BiddingDialogueAgent(
-                name=agent_name,
-                system_message=agent_system_message,
-                model=ChatOpenAI(temperature=0.2),
-                bidding_template=bidding_template
-            )
-        )
-
-    simulator = DialogueSimulator(agents=characters,
-                                    selection_function=speaker.select_next_speaker)
+    simulator = DialogueSimulator(agents= [agent], 
+                                    selection_function=None)
     simulator.reset()
     
     st.title("Chat")

@@ -22,7 +22,7 @@ class DialogueSimulator:
         for agent in self.agents:
             agent.set_history(history)
     
-
+    
     def inject(self, name: str, message: str):
         """
         Initiates the conversation with a {message} from {name}
@@ -35,7 +35,8 @@ class DialogueSimulator:
 
     def step(self):
         # 1. choose the next speaker
-        speaker_idx = self.select_next_speaker(self._step, self.agents)
+        # speaker_idx = self.select_next_speaker(self._step, self.agents)
+        speaker_idx = [0]
         messages = []
         speakers = []
         for idx in speaker_idx:

@@ -47,7 +47,6 @@ class AgentGenerator():
 
             self.agent_headers.append(AGENT_HEADER_TEMPLATE.format(
                         agent_name=self.agent_names[i],
-                        chat_description=self.chat_description,
                         agent_description = self.agent_descriptions[i]
                     ))
     
@@ -62,5 +61,5 @@ class AgentGenerator():
                     )
                 )
             ))
-
+    
     
