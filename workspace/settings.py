@@ -1,59 +1,7 @@
-AGENT_DESCRIPTION_TEMPLATE = """
-Please reply with a creative description of the conversation member, {agent_name}, 
-in {word_limit} words or less.
-This agent has a professional relationship with the proposer of the action plan 
-and will need to participate in helping accomplish it. Please ensure this agent
-has some tension with the action plan and a proposed modification so we can demonstrate 
-them proposing changes to the action plan to address their viewpoint.
-Speak directly to {agent_name}.
-Do not add anything else."""
-
-TOPIC_TEMPLATE = ""
-
-AGENT_HEADER_TEMPLATE = """
-Your name is {agent_name}.
-You are a conversation member
-"""
-
-SYSTEM_MESSAGE_TEMPLATE = """{agent_header}
-Speak in the first person from the perspective of {agent_name}
-Do not change roles!
-Do not speak from the perspective of anyone else.
-Speak only from the perspective of {character_name}.
-Try your best to suggest improvements to the action plan and get others to agree with 
-your improvements.  Be open to changes from other conversation members and understand 
-that you may not be able to get every change you want implemented in the action plan updates
-Never forget to keep your response to {word_limit} words!
-Do not add anything else.
-""" 
-
-AGENT_DESCRIPTOR_TEMPLATE = """
-You can add detail to the description of each conversation member."""
 
 CHAT_DESCRIPTION_TEMPLATE = """
 The conversation members are: {agent_names}."""
 
-
-AGENT_HEADER_TEMPLATE = """
-{chat_description}
-Your name is {agent_name}.
-You are a conversation member
-Your description is as follows: {agent_description}
-Your goal is to improve the action plan so that it best meets everyone's needs.
-"""
-
-SYSTEM_MESSAGE_TEMPLATE = """{agent_header}
-Speak in the first person from the perspective of {agent_name}
-Do not change roles!
-Do not speak from the perspective of anyone else.
-Speak only from the perspective of {agent_name}.
-Try your best to suggest improvements to the action plan and get others to agree with your improvements.  Be open to changes from other conversation members and understand that you may not be able to get every change you want implemented in the action plan updates
-Never forget to keep your response to {word_limit} words!
-
-For any proposed change to the action plan, please restate the action plan with your proposed change as part of your response so it's obvious which specific update you're trying to accomplish.
-
-Do not add anything else.
-"""
 
 PRIME_DIRECTOR_AGENT_DESCRIPTION_TEMPLATE = """
 This agent is the Prime Director

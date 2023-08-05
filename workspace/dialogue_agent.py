@@ -1,25 +1,30 @@
 from langchain.schema import (
-    AIMessage,
     HumanMessage,
     SystemMessage,
     BaseMessage,
 )
 
+from workspace.user import User
 from typing import Any
-from workspace.conversational_memory import ConversationMemory
 
 class DialogueAgent:
     def __init__(
         self,
         name: str,
+        id: int,
         system_message: SystemMessage,
         model: Any,
+        user: User,
+        version: float
     ) -> None:
         self.name = name
+        self.id = id
         self.system_message = system_message
         self.model = model
+        self.user = user
+        self.version = version
+
         self.prefix = f"{self.name}: "
-        self.memory = ConversationMemory()
         self.reset()
     
     def reset(self):
@@ -51,5 +56,5 @@ class DialogueAgent:
             f.write("New iteration\n")
             for line in self.message_history:
                 f.write(f"{line}\n")
-            
+
             f.write("\n\n")
