@@ -4,7 +4,7 @@
 node_modules
 
 # Ignore all text files
-*.txt
+conversation.txt
 
 # Ignore files related to API keys
 .env
