@@ -20,12 +20,16 @@ from workspace.prompts.action_plan_prompt import ACTION_PLAN_PROPOSER_HEADER_TEM
 
 from workspace.prompts.moderator_prompt import AGENT_MODERATOR_HEADER_TEMPLATE,\
                     AGENT_MODERATOR_SYSTEM_MESSAGE_TEMPLATE
+from workspace.prompts.commander_prompt import COMMANDER_SYSTEM_MESSAGE_TEMPLATE,\
+                    AGENT_COMMANDER_TEMPLATE
+from workspace.prompts.discussant_prompt import DISCUSSANT_SYSTEM_MESSAGE_TEMPLATE,\
+                    AGENT_DISCUSSANT_TEMPLATE
 
 
 def main():
     load_dotenv()
-    
-    agent_names = ["Action Plan Proposer"]
+
+    agent_names = ["Action Plan Proposer", "Commander Bob", "Discussant Jack"]
 
     word_limit = 500
     
@@ -34,7 +38,28 @@ def main():
                                                 agent_name = agent_names[0],
                                                 agent_header = ACTION_PLAN_PROPOSER_HEADER_TEMPLATE,
                                                 word_limit = word_limit) 
-                                                ) 
+                                                )
+
+    formatted_agent_names = ', '.join(agent_names)
+    chat_description = f"The members of conversation are {formatted_agent_names}"
+
+    commander_system_message = SystemMessage(
+        content= COMMANDER_SYSTEM_MESSAGE_TEMPLATE.format(
+                                                agent_name = agent_names[1],
+                                                agent_header = 
+                                                    AGENT_COMMANDER_TEMPLATE.format(
+                                                        chat_description = chat_description),
+                                                word_limit = word_limit) 
+                                                )
+    
+    disscusant_system_message = SystemMessage(
+        content= DISCUSSANT_SYSTEM_MESSAGE_TEMPLATE.format(
+                                                agent_name = agent_names[2],
+                                                agent_header = 
+                                                    AGENT_DISCUSSANT_TEMPLATE.format(
+                                                        chat_description = chat_description),
+                                                word_limit = word_limit) 
+                                                )
 
     moderator_system_message = SystemMessage(
         content= AGENT_MODERATOR_SYSTEM_MESSAGE_TEMPLATE)
@@ -52,6 +77,22 @@ def main():
                         version = 1.0,
                         id = 1
                         )
+    
+    agent_commander = DialogueAgent(name = agent_names[1], 
+                    system_message = commander_system_message,
+                    model = ChatOpenAI(temperature=0.2, model="gpt-3.5-turbo-16k"),
+                    user = user,
+                    version = 1.0,
+                    id = 1
+                    )
+    
+    agent_disscusant = DialogueAgent(name = agent_names[2], 
+                system_message = disscusant_system_message,
+                model = ChatOpenAI(temperature=0.2, model="gpt-3.5-turbo-16k"),
+                user = user,
+                version = 1.0,
+                id = 1
+                )
 
     moderator = BiddingDialogueAgent(name = "Moderator",
                                     system_message = moderator_system_message,
@@ -62,7 +103,8 @@ def main():
                                     id = 1
                                     )
     
-    simulator = DialogueSimulator(agents= [agent], 
+    agents = [agent, agent_commander, agent_disscusant]
+    simulator = DialogueSimulator(agents= agents, 
                                     selection_function=moderator_speaker.ask_for_agent,
                                     moderator = moderator)
     
@@ -111,8 +153,7 @@ def main():
                                             "content": full_response})
             
             st.session_state['agent_memory'].append(f"{name}: {full_response}")
-
-
+    
     if st.button('Run conversation'):
         simulator.inject_history(st.session_state['agent_memory'])
 

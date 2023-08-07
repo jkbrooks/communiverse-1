@@ -68,6 +68,7 @@ Step 2: Ask clarifying questions - Generate a set of follow-up questions to help
 Step 3: Propose action plan - Based on what the Action Plan Proposer knows of the user's commentary and their responses to its clarifying question, it will propose an action plan
 Step 4: Commanders and Discussants will suggest revisions to the action plan based on their perspectives
 Step 5: The Action Plan Proposer will communicate the updated action plan to the user
+
 Step 6: The Executors will execute the action plan
 """
 

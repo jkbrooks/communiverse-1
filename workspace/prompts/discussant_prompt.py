@@ -9,7 +9,7 @@ Your main goal is to provide feedback on the action plan and discuss it with the
 You are ruled by the Commander.
 """
 
-OBSERVER_SYSTEM_MESSAGE_TEMPLATE = """{agent_header}
+DISCUSSANT_SYSTEM_MESSAGE_TEMPLATE = """{agent_header}
 Reply in {word_limit} words or less.
 Speak in the first person from the perspective of {agent_name}.  Do not change roles! 
 Do not speak from the perspective of anyone else. Speak only from the perspective of {agent_name}.

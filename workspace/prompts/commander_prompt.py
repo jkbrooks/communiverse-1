@@ -9,7 +9,7 @@ assigning subtasks, and directing the course of task execution.
 You can give commands to the Discussant or correct the Discussant. 
 """
 
-OBSERVER_SYSTEM_MESSAGE_TEMPLATE = """{agent_header}
+COMMANDER_SYSTEM_MESSAGE_TEMPLATE = """{agent_header}
 Reply in {word_limit} words or less.
 Speak in the first person from the perspective of {agent_name}.  Do not change roles! 
 Do not speak from the perspective of anyone else. Speak only from the perspective of {agent_name}.

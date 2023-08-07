@@ -24,9 +24,10 @@ class BiddingDialogueAgent(DialogueAgent):
         """
         Asks the chat model to output a bid to speak
         """
+
         prompt = PromptTemplate(
             input_variables=["message_history", "recent_message"],
-            template=self.bidding_template,
+            template=self.bidding_template
         ).format(
             message_history="\n".join(self.message_history),
             recent_message=self.message_history[-1],
