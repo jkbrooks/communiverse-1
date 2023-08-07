@@ -1,6 +1,7 @@
 from langchain.schema import SystemMessage
 from langchain import PromptTemplate
 from typing import Any
+from workspace.user import User
 
 from workspace.dialogue_agent import DialogueAgent
 
@@ -8,11 +9,14 @@ class BiddingDialogueAgent(DialogueAgent):
     def __init__(
         self,
         name,
+        id,
         system_message: SystemMessage,
         bidding_template: PromptTemplate,
         model: Any,
+        user: User,
+        version: float
     ) -> None:
-        super().__init__(name, system_message, model)
+        super().__init__(name, id, system_message, model, user, version)
         self.bidding_template = bidding_template
     
     
@@ -28,4 +32,5 @@ class BiddingDialogueAgent(DialogueAgent):
             recent_message=self.message_history[-1],
         )
         bid_string = self.model([SystemMessage(content=prompt)]).content
+        
         return bid_string

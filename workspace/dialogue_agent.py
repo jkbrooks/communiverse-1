@@ -52,9 +52,3 @@ class DialogueAgent:
         """
         self.message_history.append(f"{name}: {message}")
         
-        with open('conversation.txt', 'a') as f:
-            f.write("New iteration\n")
-            for line in self.message_history:
-                f.write(f"{line}\n")
-
-            f.write("\n\n")

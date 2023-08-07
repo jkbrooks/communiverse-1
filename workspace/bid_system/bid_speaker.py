@@ -1,8 +1,8 @@
 import tenacity
 import numpy as np
 from typing import List
-from workspace.bidding_dialogue_agent import DialogueAgent
-from workspace.bid_output_parser import BidOutputParser
+from workspace.bid_system.bidding_dialogue_agent import DialogueAgent
+from workspace.bid_system.bid_output_parser import BidOutputParser
 
 class Speaker(BidOutputParser):
 

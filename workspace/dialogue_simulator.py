@@ -1,6 +1,7 @@
 
 from typing import Callable, List
 from workspace.dialogue_agent import DialogueAgent
+from workspace.bid_system.bidding_dialogue_agent import BiddingDialogueAgent
 
 
 class DialogueSimulator:
@@ -8,20 +9,20 @@ class DialogueSimulator:
         self,
         agents: List[DialogueAgent],
         selection_function: Callable[[int, List[DialogueAgent]], int],
+        moderator: BiddingDialogueAgent
     ) -> None:
         self.agents = agents
         self._step = 0
         self.select_next_speaker = selection_function
+        self.moderator = moderator
      
     def reset(self):
         for agent in self.agents:
             agent.reset()
 
-
     def inject_history(self, history: list):
         for agent in self.agents:
             agent.set_history(history)
-    
     
     def inject(self, name: str, message: str):
         """
@@ -36,6 +37,8 @@ class DialogueSimulator:
     def step(self):
         # 1. choose the next speaker
         # speaker_idx = self.select_next_speaker(self._step, self.agents)
+        speaker_idx = self.select_next_speaker(self.moderator)
+
         speaker_idx = [0]
         messages = []
         speakers = []

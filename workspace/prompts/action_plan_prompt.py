@@ -14,7 +14,7 @@ Step 3: Propose action plan - Based on what the Action Plan Proposer knows of th
 Step 4: You wait while Commanders and Discussants 
     will suggest revisions to the action plan based on their perspectives
 Step 5: After the Commanders and Discussants have suggested revisions to the action plan,
-    you communicate the updated action plan to the user
+    you communicate the updated action plan to the user.
 """
 
 ACTION_PLAN_PROPOSER_SYSTEM_MESSAGE_TEMPLATE = """{agent_header}
