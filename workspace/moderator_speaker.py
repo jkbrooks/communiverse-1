@@ -16,9 +16,10 @@ class ModeratorSpeaker(ModeratorOutputParser):
     def ask_for_agent(self, agent) -> str:
 
         bid_string = agent.bid()
-        print(bid_string)
+        print(f'BID STRING: {bid_string}')
         
         bid = int(self.parse(bid_string)["agent"])
         return bid
 
+    
     

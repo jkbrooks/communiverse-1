@@ -19,11 +19,11 @@ Step 5: The Action Plan Proposer will communicate the updated action plan to the
 """
 
 AGENT_MODERATOR_HEADER_TEMPLATE = """
-We have the following agent's types in the conversation in the dictionary format:
-{
-"Action Plan Proposer" : 0,
-"Commander" : 1,
-"Discussant" : 2
-}
-You need to output the value of the agent type that needs to speak next.
+We have the following agent's indexes in the conversation in the dictionary format:
+
+"Action Plan Proposer" =  0,
+"Commander" = 1,
+"Discussant" = 2
+
+You need to output the value of the agent index that needs to speak next, accordingly to the algorithm described in the system message.
 """

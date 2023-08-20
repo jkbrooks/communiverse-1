@@ -20,11 +20,24 @@ class BidOutputParser(RegexParser):
                 ```
                 {{message_history}}
                 ```
+                On a scale of 1 to 10, where 1 signifies when it is not your part of the conversation and 10 indicates when it is definitely your part of the conversation, rate the 
+                optimal time for you to start engaging based on the provided conversation and according to your role.
                 ```
                 {{recent_message}}
-                ```
-                Pick a random number between 1 and 10
+                ```                
                 {self.get_format_instructions()}
                 Do nothing else.
-            """)
-        return bidding_templates
+            """) 
+        return bidding_templates[0]
+    
+    def generate_stage_template(self, agent_header):
+        stage_template = f"""{agent_header} 
+        ```
+        {{message_history}}
+        ```
+        You should return your current step of the conversation, according to the conversation and your role.
+        ```
+        {self.get_format_instructions()}
+        Do nothing else. 
+        """
+        return stage_template

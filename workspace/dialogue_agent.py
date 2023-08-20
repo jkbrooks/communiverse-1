@@ -3,7 +3,7 @@ from langchain.schema import (
     SystemMessage,
     BaseMessage,
 )
-
+from langchain import PromptTemplate
 from workspace.user import User
 from typing import Any
 
@@ -15,7 +15,9 @@ class DialogueAgent:
         system_message: SystemMessage,
         model: Any,
         user: User,
-        version: float
+        version: float,
+        bidding_template: str,
+        stage_template = None
     ) -> None:
         self.name = name
         self.id = id
@@ -23,6 +25,8 @@ class DialogueAgent:
         self.model = model
         self.user = user
         self.version = version
+        self.bidding_template = bidding_template
+        self.stage_template = stage_template
 
         self.prefix = f"{self.name}: "
         self.reset()
@@ -51,4 +55,31 @@ class DialogueAgent:
         Concatenates {message} spoken by {name} into message history
         """
         self.message_history.append(f"{name}: {message}")
-        
+
+    def generate_template_for_stage():
+        pass
+
+    def get_stage(self):
+        """
+        Asks the chat model to output the stage of his algorithm
+        """
+        if self.name == 'Action Plan Proposer':
+            prompt = PromptTemplate(input_variables=['message_history'], 
+                                    template=self.stage_template).format(message_history="\n".join(self.message_history))
+    
+        stage_string = self.model([SystemMessage(content=prompt)]).content
+        return stage_string
+
+    def bid(self) -> str:
+        """
+        Asks the chat model to output a bid to speak
+        """
+        prompt = PromptTemplate(
+            input_variables=["message_history", "recent_message"],
+            template=self.bidding_template,
+        ).format(
+            message_history="\n".join(self.message_history),
+            recent_message=self.message_history[-1],
+        )
+        bid_string = self.model([SystemMessage(content=prompt)]).content
+        return bid_string

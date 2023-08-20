@@ -17,7 +17,6 @@ if "messages" not in st.session_state:
 if 'agent_memory' not in st.session_state:
     st.session_state['agent_memory'] = ["Here is the conversation so far."]
 
-
 if st.session_state.name_written  == False:
     st.session_state.user_name = st.text_input('Enter your user name.')
 
@@ -65,15 +64,4 @@ if st.session_state.conformation:
             
 
             
-            # WORKING OPTION BUT TAKES VERY LONG TIME.
-            # with chat_container.container():
-            #     for i in range(len(data)):
-            #         elem = data[i]
-            #         elem_splitted = elem.split(':')
-            #         name = elem_splitted[0]
-            #         value = ' '.join(elem_splitted[1:])
-            #         with st.chat_message(name=name):
-            #             if value is not None or value != '':
-            #                 st.markdown(value)
-                            
                     

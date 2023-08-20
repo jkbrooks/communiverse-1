@@ -12,3 +12,6 @@ conversation.txt
 __pycache__/
 
 venv
+chat.txt
+moderator_testing.ipynb
+testing.py

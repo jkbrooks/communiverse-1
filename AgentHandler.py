@@ -1,21 +1,20 @@
-import streamlit as st
-
 from langchain.schema import (
     SystemMessage)
+import numpy as np
 
 from langchain.chat_models import ChatOpenAI
 from dotenv import load_dotenv
 import time
 
 from workspace.user import User
-import numpy as np
+
 from workspace.dialogue_simulator import DialogueSimulator
 
 from workspace.moderator_speaker import ModeratorSpeaker
 from workspace.bid_system.bidding_dialogue_agent import BiddingDialogueAgent
-from workspace.dialogue_agent import DialogueAgent
 from workspace.bid_system.bid_output_parser import BidOutputParser
 from workspace.bid_system.bid_speaker import Speaker
+from workspace.dialogue_agent import DialogueAgent
 
 from workspace.prompts.action_plan_prompt import ACTION_PLAN_PROPOSER_HEADER_TEMPLATE,\
                     ACTION_PLAN_PROPOSER_SYSTEM_MESSAGE_TEMPLATE
@@ -26,9 +25,6 @@ from workspace.prompts.commander_prompt import COMMANDER_SYSTEM_MESSAGE_TEMPLATE
                     AGENT_COMMANDER_TEMPLATE
 from workspace.prompts.discussant_prompt import DISCUSSANT_SYSTEM_MESSAGE_TEMPLATE,\
                     AGENT_DISCUSSANT_TEMPLATE
-
-
-
 
 def select_next_speaker(step, agents) -> int:
         print(f"STEP: {step}")
@@ -72,25 +68,23 @@ def select_next_speaker(step, agents) -> int:
             idx = 0
             return idx
 
-
-def main():
-    if 'loaded_agents' not in st.session_state.keys():
-        st.session_state.loaded_agents = False
+def load_agents():
     
-    load_dotenv()
+    load_dotenv('~/.zshrc')
 
     agent_names = ["Action Plan Proposer", "Commander Bob", "Discussant Jack"]
-    
-    
+
+
+
 
     word_limit = 500
-    
+
     action_system_message = SystemMessage(
-    content= ACTION_PLAN_PROPOSER_SYSTEM_MESSAGE_TEMPLATE.format(
-                                            agent_name = agent_names[0],
-                                            agent_header = ACTION_PLAN_PROPOSER_HEADER_TEMPLATE,
-                                            word_limit = word_limit) 
-                                            )
+        content= ACTION_PLAN_PROPOSER_SYSTEM_MESSAGE_TEMPLATE.format(
+                                                agent_name = agent_names[0],
+                                                agent_header = ACTION_PLAN_PROPOSER_HEADER_TEMPLATE,
+                                                word_limit = word_limit) 
+                                                )
 
     formatted_agent_names = ', '.join(agent_names)
     chat_description = f"The members of conversation are {formatted_agent_names}"
@@ -125,7 +119,6 @@ def main():
                                                         chat_description = chat_description))
 
     stage_template_action_plan_proposer = bid_parser_object.generate_stage_template(ACTION_PLAN_PROPOSER_HEADER_TEMPLATE)
-
 
 
     # bidding_template = moderator_speaker.generate_agent_moderator_template(
@@ -167,81 +160,7 @@ def main():
 
 
     agents = [agent, agent_commander, agent_disscusant]
-    if st.session_state.loaded_agents == False:
-        print('I am here')
-        st.session_state.simulator = DialogueSimulator(agents= agents, 
+    simulator = DialogueSimulator(agents= agents, 
                                     selection_function=select_next_speaker)
-
-        st.session_state.simulator.reset()
-        st.session_state.loaded_agents = True
     
-    st.title("Chat")
-
-    if "messages" not in st.session_state.keys():
-        st.session_state.messages = []
-
-    if 'agent_memory' not in st.session_state.keys():
-        st.session_state['agent_memory'] = ["Here is the conversation so far."]
-    
-    for message in st.session_state.messages:
-        with st.chat_message(message["role"]):
-            st.markdown(message["content"])
-
-    if prompt := st.chat_input("Enter your message here"):
-        st.session_state.simulator.inject_history(st.session_state['agent_memory'])
-
-        st.session_state['agent_memory'].append(f"user: {prompt}")
-        print(st.session_state['agent_memory'])
-        
-        st.session_state.messages.append({"role": "user", "content": prompt})
-        
-        with st.chat_message("user"):
-            st.markdown(prompt)
-
-            st.session_state.simulator.inject("user", prompt)
-
-        names, assistant_responses = st.session_state.simulator.step()
-         
-        for name, assistant_response in zip(names, assistant_responses):
-            with st.chat_message(name):
-                message_placeholder = st.empty()
-                full_response = ""
-                
-                for chunk in assistant_response.split():
-                    full_response += chunk + " "
-                    time.sleep(0.05)
-                    
-                    message_placeholder.markdown(full_response + "▌")
-
-                message_placeholder.markdown(f'{name}: {full_response}')
-
-            st.session_state.messages.append({"role": name,
-                                            "content": full_response})
-            
-            st.session_state['agent_memory'].append(f"{name}: {full_response}")
-    
-    if st.button('Run conversation'):
-        st.session_state.simulator.inject_history(st.session_state['agent_memory'])
-
-        names, assistant_responses = st.session_state.simulator.step()
-
-        for name, assistant_response in zip(names, assistant_responses):
-            with st.chat_message(name):
-                message_placeholder = st.empty()
-                full_response = ""
-                
-                for chunk in assistant_response.split():
-                    full_response += chunk + " "
-                    time.sleep(0.05)
-                    
-                    message_placeholder.markdown(full_response + "▌")
-
-                message_placeholder.markdown(full_response)
-
-            st.session_state.messages.append({"role": name,
-                                            "content": full_response})
-            
-            st.session_state['agent_memory'].append(f"{name}: {full_response}")
- 
-if __name__ == "__main__":
-    main()
+    return simulator

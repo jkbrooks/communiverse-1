@@ -1,7 +1,7 @@
 
 from typing import Callable, List
-from workspace.dialogue_agent import DialogueAgent
-from workspace.bid_system.bidding_dialogue_agent import BiddingDialogueAgent
+from .dialogue_agent import DialogueAgent
+from .bid_system.bidding_dialogue_agent import BiddingDialogueAgent
 
 
 class DialogueSimulator:
@@ -9,16 +9,16 @@ class DialogueSimulator:
         self,
         agents: List[DialogueAgent],
         selection_function: Callable[[int, List[DialogueAgent]], int],
-        moderator: BiddingDialogueAgent
     ) -> None:
         self.agents = agents
         self._step = 0
         self.select_next_speaker = selection_function
-        self.moderator = moderator
      
     def reset(self):
         for agent in self.agents:
             agent.reset()
+
+
 
     def inject_history(self, history: list):
         for agent in self.agents:
@@ -32,30 +32,27 @@ class DialogueSimulator:
             agent.receive(name, message)
 
         # increment time
-        self._step += 1
+        # self._step += 1
+
 
     def step(self):
         # 1. choose the next speaker
         # speaker_idx = self.select_next_speaker(self._step, self.agents)
-        speaker_idx = self.select_next_speaker(self.moderator)
-
-        speaker_idx = [0]
+        speaker_idx = self.select_next_speaker(self._step, self.agents)
+        print(speaker_idx)
+        print(f' OUTPUT SPEAKER IND: {speaker_idx}')
+        # speaker_idx = [0]
         messages = []
         speakers = []
-        for idx in speaker_idx:
-            speaker = self.agents[idx]
 
-            # 2. next speaker sends message
-            message = speaker.send()
+        speaker = self.agents[speaker_idx]
+        message = speaker.send()
+        messages.append(message)
+        speakers.append(speaker.name)
 
-            messages.append(message)
-            speakers.append(speaker.name)
+        for receiver in self.agents:
+            receiver.receive(speaker.name, message)
 
-            # 3. everyone receives message
-            for receiver in self.agents:
-                receiver.receive(speaker.name, message)
-            
-            # 4. increment time
-            self._step += 1
-        
+        self._step += 1
+        print(f'SELF STEP: {self._step} ')
         return speakers, messages
