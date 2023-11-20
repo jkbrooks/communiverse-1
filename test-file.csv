@@ -1,0 +1,621 @@
+,id,state,title,body,date
+0,95,open,Some translations are not possible,"### Issue description
+Running latest image `easynmt/api:2.0-cpu` with the model set to `m2m_100_418M` and english as target language fails for some translations. Here are some examples:
+
+* 'imagina a mi'
+* 'imagina un sol'
+* 'imagina a un vikingo'
+
+![image](https://github.com/UKPLab/EasyNMT/assets/12993089/a630a7e9-b76d-4ce1-98a0-783ea5cd00f6)
+In this case for example, setting the source_lang to 'es' fixed the issue, so maybe the problem is somewhere in the language detection step or that there isn't a translation direction from the detected language to english.
+### Docker logs output:
+````
+[2023-09-28 08:38:08 +0000] [60] [INFO] Waiting for application startup.
+[2023-09-28 08:38:08 +0000] [60] [INFO] Application startup complete.
+Exception: 'jbo'
+````
+the text of the exception varies with every prompt, I guess it is the code of the detected language",2023-09-28T09:01:12Z
+1,94,open,Support for new OPUS-MT models,"It seems that OPUS-MT models have been updated recently, and the library can't locate them in the old HuggingFace links...
+
+They seem to have released what they call `tc-big` models, e.g., https://huggingface.co/Helsinki-NLP/opus-mt-tc-big-el-en. Is it possible to do a hotfix to support loading the new models?
+
+With the current code, I do the following call:
+
+```python
+from easynmt import EasyNMT
+
+model = EasyNMT('opus-mt')
+
+translated_sentences = model.translate('Γειά σου, τι κάνεις;',
+                                                   source_lang='el',
+                                                   target_lang='en',
+                                                   perform_sentence_splitting=True)
+```
+
+and I get the following error:
+
+```
+Repository Not Found for url: https://huggingface.co/Helsinki-NLP/opus-mt-el-en/resolve/main/source.spm
+....
+```",2023-09-19T13:33:17Z
+2,93,open,Suport for fine tuned models,Are you considering adding a feature that allows you to specify your own fine-tuned opus-mt-model? It would be hugely helpful. ,2023-09-01T07:25:12Z
+3,89,open,Encountered error while trying to install fasttext,"anyone has idea how to fix this?
+i am using a new profile on company's laptop, the old profile had no issue when installing
+![image](https://user-images.githubusercontent.com/122432985/229527079-5ae640c2-9a4e-4dec-84bf-c80f18347087.png)
+",2023-04-03T13:41:16Z
+4,92,open,gpu memory does not get released with `max_loaded_models`,"Running the example code and watching `watch -n .3 nvidia-smi` you can see that the memory keeps increasing and is not released on the gpu.
+
+Did i miss something here?
+
+```python
+model = EasyNMT(""opus-mt"", max_loaded_models=1)
+
+model.translate(""Hallo, das ist ein Satz."", target_lang=""en"", source_lang=""de"")
+model.translate(""Hallo, das ist ein Satz."", target_lang=""fr"", source_lang=""de"")
+
+time.sleep(3)
+gc.collect()
+torch.cuda.empty_cache()
+time.sleep(3)
+
+model.translate(""Hallo, das ist ein Satz."", target_lang=""nl"", source_lang=""de"")
+model.translate(""Hallo, das ist ein Satz."", target_lang=""it"", source_lang=""de"")
+```",2023-05-26T10:08:29Z
+5,73,open,Support for NLLB,"Hello,
+
+Do you plan to support NLLB model ?
+
+Thanks !",2022-07-18T17:18:10Z
+6,90,open,What's in v2.0.2,"On PyPI the latest release of EasyNMT is 2.0.2, but here on github the latest version seems to be 2.0.0. What is the difference and why is v2.0.2 not available as a tag on github?",2023-04-18T08:25:19Z
+7,87,open,Gibberish translation coming for some languages,"Hi @nreimers 
+
+I am using m2m_100_1.2B for translation. I noticed that for some languages like Azerbaijani (az) it is giving weird results. Couple of examples are below. Can you suggest what is happening here and how to fix this?
+
+İşçilərə motivasiya vermək onların fikrlərin nəzərə almaq və ən əsaslı savadlı kadrlara üstünlük vermək və onlara dəyər vermək inkişaf etməyinə dəstək olmaq.Bizlər daha yüksəkliklərə nailik. **--> translated to:** They are the ones who are the ones who are the ones who are the ones who are the ones who are the ones who are the ones who are the ones who are the ones who are the ones who are the ones who are the ones who are the ones who are the ones who are the ones who are the ones who are the ones who are the ones who are the ones who are the ones who are the ones who are the ones who are the ones who are the ones who are the ones who are the ones who are the ones who are the ones who are the ones who are the ones who are the ones who are the ones who are the ones who are the ones who are the ones who are the ones who are the ones who are the ones who are the ones who are the ones who are the ones who are the ones who are the ones who are the ones who are the ones who are the ones who are the ones who are the ones who are the ones
+
+
+Yeni layihə və məhsul istifadəyə buraxilmazdan öncə sistem və tarif bsxımöndam tam hazır edilməai.İşçilərə əmək haqqı və bonus hesablanmasında mövcüd infilasiyanı nəzərə almaq.(bonuslar çox azalıb,vəzifə ə/h illərdi  eyni həcmdə qalıb,baxmayaraq ki ölkədə infilasiya çox yüksəkdi)Müştərilər tez tez narahatlıq edir (texniki overdraft,birbankda texniki problemlər,bankomatların işləməməsi və s) **--> translated to:** Therefore, before the new and the new, the new and the new, the new and the new, the new and the new, the new and the new, the new and the new, the new and the new, the new and the new, the new and the new, the new and the new, the new and the new, the new and the new, the new and the new, the new and the new, the new and the new, the new, the new and the new, the new, the new, the new, the new, the new, the new, the new, the new, the new, the new, the new, the new, the new, the new, the new, the new, the new, the new, the new, the new, the new, the new, the new, the new, the new, the new, the new, the new, the new, the new.“[They] have a great deal of power, and they have a great deal of power, and they have a great deal of power, and they have a great deal of power, and they have a great deal of power.",2023-03-20T08:33:21Z
+8,88,open,Demo doesn't allow selection of Target language,"https://easynmt.net/demo/
+
+Though I suspect it's a dropdown, when I click on Target language nothing happens, seems the demo is broken in some way, thanks!
+",2023-04-01T20:18:37Z
+9,65,open,[ERROR] Exception in ASGI application,"I use it for translations and language detection. It works perfect, but sometimes it failed with 500 error and I see in my pod logs this error multiple times:
+```
+[2022-05-12 09:01:32 +0000] [21] [ERROR] Exception in ASGI application
+Traceback (most recent call last):
+  File ""/usr/local/lib/python3.8/site-packages/uvicorn/protocols/http/httptools_impl.py"", line 398, in run_asgi
+    result = await app(self.scope, self.receive, self.send)
+  File ""/usr/local/lib/python3.8/site-packages/uvicorn/middleware/proxy_headers.py"", line 45, in __call__
+    return await self.app(scope, receive, send)
+  File ""/usr/local/lib/python3.8/site-packages/fastapi/applications.py"", line 199, in __call__
+    await super().__call__(scope, receive, send)
+  File ""/usr/local/lib/python3.8/site-packages/starlette/applications.py"", line 111, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File ""/usr/local/lib/python3.8/site-packages/starlette/middleware/errors.py"", line 181, in __call__
+    raise exc from None
+  File ""/usr/local/lib/python3.8/site-packages/starlette/middleware/errors.py"", line 159, in __call__
+    await self.app(scope, receive, _send)
+  File ""/usr/local/lib/python3.8/site-packages/starlette/middleware/cors.py"", line 78, in __call__
+    await self.app(scope, receive, send)
+  File ""/usr/local/lib/python3.8/site-packages/starlette/exceptions.py"", line 82, in __call__
+    raise exc from None
+  File ""/usr/local/lib/python3.8/site-packages/starlette/exceptions.py"", line 71, in __call__
+    await self.app(scope, receive, sender)
+  File ""/usr/local/lib/python3.8/site-packages/starlette/routing.py"", line 566, in __call__
+    await route.handle(scope, receive, send)
+  File ""/usr/local/lib/python3.8/site-packages/starlette/routing.py"", line 227, in handle
+    await self.app(scope, receive, send)
+  File ""/usr/local/lib/python3.8/site-packages/starlette/routing.py"", line 41, in app
+    response = await func(request)
+  File ""/usr/local/lib/python3.8/site-packages/fastapi/routing.py"", line 201, in app
+    raw_response = await run_endpoint_function(
+  File ""/usr/local/lib/python3.8/site-packages/fastapi/routing.py"", line 148, in run_endpoint_function
+    return await dependant.call(**values)
+  File ""/app/main.py"", line 55, in translate
+    x = await async_client.post(BACKEND_URL+'/translate', json=data, timeout=3600)
+  File ""/usr/local/lib/python3.8/site-packages/http3/client.py"", line 392, in post
+    return await self.request(
+  File ""/usr/local/lib/python3.8/site-packages/http3/client.py"", line 541, in request
+    response = await self.send(
+  File ""/usr/local/lib/python3.8/site-packages/http3/client.py"", line 140, in send
+    response = await self.send_handling_redirects(
+  File ""/usr/local/lib/python3.8/site-packages/http3/client.py"", line 177, in send_handling_redirects
+    response = await self.dispatch.send(
+  File ""/usr/local/lib/python3.8/site-packages/http3/dispatch/connection_pool.py"", line 130, in send
+    raise exc
+  File ""/usr/local/lib/python3.8/site-packages/http3/dispatch/connection_pool.py"", line 120, in send
+    response = await connection.send(
+  File ""/usr/local/lib/python3.8/site-packages/http3/dispatch/connection.py"", line 59, in send
+    response = await self.h11_connection.send(request, timeout=timeout)
+  File ""/usr/local/lib/python3.8/site-packages/http3/dispatch/http11.py"", line 58, in send
+    http_version, status_code, headers = await self._receive_response(timeout)
+  File ""/usr/local/lib/python3.8/site-packages/http3/dispatch/http11.py"", line 130, in _receive_response
+    event = await self._receive_event(timeout)
+  File ""/usr/local/lib/python3.8/site-packages/http3/dispatch/http11.py"", line 161, in _receive_event
+    event = self.h11_state.next_event()
+  File ""/usr/local/lib/python3.8/site-packages/h11/_connection.py"", line 439, in next_event
+    exc._reraise_as_remote_protocol_error()
+  File ""/usr/local/lib/python3.8/site-packages/h11/_util.py"", line 72, in _reraise_as_remote_protocol_error
+    raise self
+  File ""/usr/local/lib/python3.8/site-packages/h11/_connection.py"", line 422, in next_event
+    self._process_event(self.their_role, event)
+  File ""/usr/local/lib/python3.8/site-packages/h11/_connection.py"", line 238, in _process_event
+    self._cstate.process_event(role, type(event), server_switch_event)
+  File ""/usr/local/lib/python3.8/site-packages/h11/_state.py"", line 238, in process_event
+    self._fire_event_triggered_transitions(role, event_type)
+  File ""/usr/local/lib/python3.8/site-packages/h11/_state.py"", line 251, in _fire_event_triggered_transitions
+    raise LocalProtocolError(
+h11._util.RemoteProtocolError: can't handle event type ConnectionClosed when role=SERVER and state=SEND_RESPONSE
+```
+
+And then in few minutes:
+```
+[2022-05-12 09:01:32 +0000] [177642] [INFO] Booting worker with pid: 177642
+[2022-05-12 09:01:34 +0000] [177642] [INFO] Started server process [177642]
+[2022-05-12 09:01:34 +0000] [177642] [INFO] Waiting for application startup.
+[2022-05-12 09:01:34 +0000] [177642] [INFO] Application startup complete.
+{""loglevel"": ""info"", ""workers"": ""1"", ""bind"": ""0.0.0.0:port"", ""graceful_timeout"": 120, ""timeout"": 120, ""keepalive"": 5, ""errorlog"": ""-"", ""accesslog"": ""-"", ""host"": ""0.0.0.0"", ""port"": ""port""}
+```
+
+I run it in k8s, maybe it was the reason.",2022-05-12T09:08:08Z
+10,86,open,Resource requirements for Docker Container CPU Image,@nreimers Could you please suggest bet resource requirements for cpu image for docker containers. response is much appreciated @nreimers ,2023-02-27T08:19:57Z
+11,76,open,Exception when trying to download Response 403,"Exception when trying to download http://easynmt.net/models/v2/opus-mt/easynmt.json. Response 403
+
+im so sad about this",2022-08-22T09:28:41Z
+12,74,open,Enable manually specifying the desired OPUS model?,"I really like the library, great work!
+Is there a way to manually specify a specific OPUS model? For example EasyNMT with OPUS currently does not support English as source and Portuguese as target language because it tries to download 'opus-mt-en-pt' by default, which does not exist. 
+There is, however, an en2pt model on the hub now (https://huggingface.co/Helsinki-NLP/opus-mt-tc-big-en-pt) with a slightly different name. I don't know how to tell EasyNMT to take this specific model instead of throwing the following error: 
+
+`OSError: Helsinki-NLP/opus-mt-en-pt is not a local folder and is not a valid model identifier listed on 'https://huggingface.co/models'
+`",2022-07-31T10:13:15Z
+13,85,open,Slow running on Colab,"Hello, I was running both mbart & opus-mt on Colab
+![image](https://user-images.githubusercontent.com/20409922/214518014-46402f5f-21a3-48f1-aa87-c2d4dd3f0339.png)
+
+and waited for hours even with GPU acceleration. Is this normal? I was trying to translate a non-English column to English with ~10000 rows as shown below. 
+`df.apply(lambda row: model.translate(row[""area""], target_lang=""en""), axis=1)`
+",2023-01-25T08:51:23Z
+14,66,open,Onnx conversion,"Model: opus-mt 
+
+Won't be a bad idea to convert it to onnx.
+",2022-05-17T09:46:22Z
+15,84,open,Zsh: Illegal Hardware Instruction Issue on M2 MacBook,"Hello, Sorry pretty new to python. Im having some issues running EasyMNT. Details below:
+
+When running through terminal:
+`zsh: illegal hardware instruction`
+
+When running in a Jupyter Notebook:
+
+Inline Response:
+`The Kernel crashed while executing code in the the current cell or a previous cell. Please review the code in the cell(s) to identify a possible cause of the failure. Click [here](https://aka.ms/vscodeJupyterKernelCrash) for more info. View Jupyter [log](command:jupyter.viewOutput) for further details.
+Canceled future for execute_request message before replies were done`
+
+Output: 
+`[I 13:14:50.850 NotebookApp] KernelRestarter: restarting kernel (1/5), keep random ports
+error 13:14:50.855: Error in waiting for cell to complete [Error: Canceled future for execute_request message before replies were done
+	at a.KernelShellFutureHandler.dispose (/Users/roshanmurthy/.vscode-oss/extensions/ms-toolsai.jupyter-2022.10.110-universal/out/node_modules/@jupyterlab/services.js:2:32353)
+	at /Users/roshanmurthy/.vscode-oss/extensions/ms-toolsai.jupyter-2022.10.110-universal/out/node_modules/@jupyterlab/services.js:2:26572
+	at Map.forEach (<anonymous>)
+	at y._clearKernelState (/Users/roshanmurthy/.vscode-oss/extensions/ms-toolsai.jupyter-2022.10.110-universal/out/node_modules/@jupyterlab/services.js:2:26557)
+	at /Users/roshanmurthy/.vscode-oss/extensions/ms-toolsai.jupyter-2022.10.110-universal/out/node_modules/@jupyterlab/services.js:2:29000
+	at process.processTicksAndRejections (node:internal/process/task_queues:96:5)]
+warn 13:14:50.855: Cell completed with errors {
+  message: 'Canceled future for execute_request message before replies were done'
+}
+info 13:14:50.856: Cancel all remaining cells true || Error || undefined
+[I 13:14:50.857 NotebookApp] Starting buffering for 689067b1-b5b8-457d-8ff0-4e5e7508e5ef:a74f7941-f52b-48bc-b83f-ef4136fea7e6
+[I 13:14:50.863 NotebookApp] Restoring connection for 689067b1-b5b8-457d-8ff0-4e5e7508e5ef:a74f7941-f52b-48bc-b83f-ef4136fea7e6
+`",2023-01-16T21:18:57Z
+16,83,open,Is English to Thailand not available as opus-mt pre-trained model?,it shows: **OSError: Helsinki-NLP/opus-mt-en-th is not a local folder and is not a valid model identifier listed on 'https://huggingface.co/models'**,2023-01-11T07:35:23Z
+17,35,open,"html tags, proper nouns","First, I need to congratulate the team for your work, especially Nils is imho one of the best devs in the NLP community. Sentence-transformers and this NMT translator repo have been very helpful to us in Contents.com.
+
+I use the Opus-mt right now it is great and I noticed that it even keeps hmtl tags. But sometimes it makes a mistake of generating "">/strong>"", ×/strong> or --/strong> instead of </strong> (_strong_ as example, same for other tags like _h3_ or _li_ (as far as I know)). I solved it by simply replacing: text = text.replace('×/', '</').replace('>/', '</').replace('--/', '</'). It is a very simple thing, Just wanted to make you know.
+
+I wonder if you are aware of a translator model that is very good at keeping the proper nouns like people, cities, company nouns ect unchanged, even when made by 2 or more words? I could use NER but it could decrease speed and tbh I don't find the free NER libraries enough reliable.
+
+Thank you!
+",2021-05-21T13:37:39Z
+18,81,open,Finetune/Train on custom dataset,Can we train `EasyNMT` on our own custom datasets. If yes please tell us the process.,2022-12-12T06:45:26Z
+19,46,open,"If you tried to load a PyTorch model from a TF 2.0 checkpoint, please set from_tf=True. ","
+![image](https://user-images.githubusercontent.com/2882717/128658509-5788dfb5-73ab-49ed-ac9b-7a148048bf86.png)
+
+
+![image](https://user-images.githubusercontent.com/2882717/128658549-2878267a-734e-4066-baae-e792befff279.png)
+
+
+
+OSError: Unable to load weights from pytorch checkpoint file for 'facebook/m2m100_1.2B' at '/cache/transformers/68002fb1a7773d8d8373f1a230588141964ef9f249db6987681f295dbe85356c.ee70663869b89be4f68eed03a21d5c3400b223cb544883f411e469aaea0a25f9'If you tried to load a PyTorch model from a TF 2.0 checkpoint, please set from_tf=True. ",2021-08-09T03:49:54Z
+20,80,open,Is there randomness in translation or does every translation lead to the exact same output?,"Thanks a lot for creating this great package!
+Question: will every translation with equivalent input always lead to the exact same output, or is there some randomness involved (e.g. through beamsearch), which requires setting a seed for full reproducibility? 
+I've discussed this with colleagues and there seem to be some [beamsearch algorithms](https://en.wikipedia.org/wiki/Beam_search) that are stochastic (i.e. introduce randomness) and others do not. Which one is used here? If a stochastic algorithm is used, how would be set a seed to ensure reproducibility?",2022-11-01T09:06:02Z
+21,79,open,EasyNMT,"  
+Hi, Thank you for this useful library.  I tried to install in my machine and it gave me this error.
+Any help please?
+
+  print(model.translate('This is a sentence we want to translate to German', target_lang='de'))
+  File ""/home/karima/.local/lib/python3.8/site-packages/easynmt/EasyNMT.py"", line 154, in translate
+    raise e
+  File ""/home/karima/.local/lib/python3.8/site-packages/easynmt/EasyNMT.py"", line 149, in translate
+    translated = self.translate(**method_args)
+  File ""/home/karima/.local/lib/python3.8/site-packages/easynmt/EasyNMT.py"", line 181, in translate
+    translated_sentences = self.translate_sentences(splitted_sentences, target_lang=target_lang, source_lang=source_lang, show_progress_bar=show_progress_bar, beam_size=beam_size, batch_size=batch_size, **kwargs)
+  File ""/home/karima/.local/lib/python3.8/site-packages/easynmt/EasyNMT.py"", line 278, in translate_sentences
+    output.extend(self.translator.translate_sentences(sentences_sorted[start_idx:start_idx+batch_size], source_lang=source_lang, target_lang=target_lang, beam_size=beam_size, device=self.device, **kwargs))
+  File ""/home/karima/.local/lib/python3.8/site-packages/easynmt/models/OpusMT.py"", line 49, in translate_sentences
+    translated = model.generate(**inputs, num_beams=beam_size, **kwargs)
+  File ""/home/karima/.local/lib/python3.8/site-packages/torch/autograd/grad_mode.py"", line 27, in decorate_context
+    return func(*args, **kwargs)
+  File ""/home/karima/.local/lib/python3.8/site-packages/transformers/generation_utils.py"", line 1182, in generate
+    model_kwargs = self._prepare_encoder_decoder_kwargs_for_generation(
+  File ""/home/karima/.local/lib/python3.8/site-packages/transformers/generation_utils.py"", line 525, in _prepare_encoder_decoder_kwargs_for_generation
+    model_kwargs[""encoder_outputs""]: ModelOutput = encoder(**encoder_kwargs)
+  File ""/home/karima/.local/lib/python3.8/site-packages/torch/nn/modules/module.py"", line 1130, in _call_impl
+    return forward_call(*input, **kwargs)
+  File ""/home/karima/.local/lib/python3.8/site-packages/transformers/models/marian/modeling_marian.py"", line 749, in forward
+    inputs_embeds = self.embed_tokens(input_ids) * self.embed_scale
+  File ""/home/karima/.local/lib/python3.8/site-packages/torch/nn/modules/module.py"", line 1130, in _call_impl
+    return forward_call(*input, **kwargs)
+  File ""/home/karima/.local/lib/python3.8/site-packages/torch/nn/modules/sparse.py"", line 158, in forward
+    return F.embedding(
+  File ""/home/karima/.local/lib/python3.8/site-packages/torch/nn/functional.py"", line 2199, in embedding
+    return torch.embedding(weight, input, padding_idx, scale_grad_by_freq, sparse)
+RuntimeError: CUDA error: no kernel image is available for execution on the device
+CUDA kernel errors might be asynchronously reported at some other API call,so the stacktrace below might be incorrect.
+For debugging consider passing CUDA_LAUNCH_BLOCKING=1.",2022-09-12T08:27:41Z
+22,78,open,How to run test_translation_speed.py,easynmt docker install is working fine through http requests. Now i'd like to run some benchmark. How do you run /examples/test_translation_speed.py ?,2022-09-08T18:21:28Z
+23,77,open,Workflow for large datasets,"Hi! I was wondering if there is a workflow for large datasets available. I am trying to translate a big amount of tweets using Pandas and Python. 
+
+Best, 
+Daniel",2022-08-31T12:11:24Z
+24,28,open,New benchmarks for the m2m/mbart models after the switch away from Fairseq to huggingface transformers in EasyNMT 2.0,"With the [switch away from Fairseq to huggingface transformers](https://github.com/UKPLab/EasyNMT/commit/9b69703af901a7aeb83b5dda0830123a91c307ab) in EasyNMT 2.0, there seem to have been substantial changes, e.g. the size of the `m2m_100_1.2B` model has [increased from 2.3 GB to 5 GB in size](https://github.com/UKPLab/EasyNMT/commit/f3af26a0e5c5ab1dc066bd8ef095403a43dc7b90).
+
+Do we need new [benchmark tests](https://github.com/UKPLab/EasyNMT/blob/acad45cebaa63716e4e9c319c2b9d26760c3be2f/README.md#available-models) for the m2m/mbart models after this change? In general, will this make translation inference slower or faster compared to before (by subjective opinion)?",2021-05-02T01:13:10Z
+25,72,open,Maybe http3 related bug or not?,"Try to use `mbart50_m2m` model and when I pass 1 000+ chars, sometimes it can be 1000, sometimes 3000, I got 504 error from my CF and next trace in logs:
+
+```
+[2022-06-08 11:22:59 +0000] [21] [ERROR] Exception in ASGI application
+Traceback (most recent call last):
+  File ""/usr/local/lib/python3.8/site-packages/h11/_state.py"", line 249, in _fire_event_triggered_transitions
+    new_state = EVENT_TRIGGERED_TRANSITIONS[role][state][event_type]
+KeyError: <class 'h11._events.ConnectionClosed'>
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File ""/usr/local/lib/python3.8/site-packages/uvicorn/protocols/http/httptools_impl.py"", line 372, in run_asgi
+    result = await app(self.scope, self.receive, self.send)
+  File ""/usr/local/lib/python3.8/site-packages/uvicorn/middleware/proxy_headers.py"", line 75, in __call__
+    return await self.app(scope, receive, send)
+  File ""/usr/local/lib/python3.8/site-packages/fastapi/applications.py"", line 269, in __call__
+    await super().__call__(scope, receive, send)
+  File ""/usr/local/lib/python3.8/site-packages/starlette/applications.py"", line 124, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File ""/usr/local/lib/python3.8/site-packages/starlette/middleware/errors.py"", line 184, in __call__
+    raise exc
+  File ""/usr/local/lib/python3.8/site-packages/starlette/middleware/errors.py"", line 162, in __call__
+    await self.app(scope, receive, _send)
+  File ""/usr/local/lib/python3.8/site-packages/starlette/middleware/cors.py"", line 84, in __call__
+    await self.app(scope, receive, send)
+  File ""/usr/local/lib/python3.8/site-packages/starlette/exceptions.py"", line 93, in __call__
+    raise exc
+  File ""/usr/local/lib/python3.8/site-packages/starlette/exceptions.py"", line 82, in __call__
+    await self.app(scope, receive, sender)
+  File ""/usr/local/lib/python3.8/site-packages/fastapi/middleware/asyncexitstack.py"", line 21, in __call__
+    raise e
+  File ""/usr/local/lib/python3.8/site-packages/fastapi/middleware/asyncexitstack.py"", line 18, in __call__
+    await self.app(scope, receive, send)
+  File ""/usr/local/lib/python3.8/site-packages/starlette/routing.py"", line 670, in __call__
+    await route.handle(scope, receive, send)
+  File ""/usr/local/lib/python3.8/site-packages/starlette/routing.py"", line 266, in handle
+    await self.app(scope, receive, send)
+  File ""/usr/local/lib/python3.8/site-packages/starlette/routing.py"", line 65, in app
+    response = await func(request)
+  File ""/usr/local/lib/python3.8/site-packages/fastapi/routing.py"", line 227, in app
+    raw_response = await run_endpoint_function(
+  File ""/usr/local/lib/python3.8/site-packages/fastapi/routing.py"", line 160, in run_endpoint_function
+    return await dependant.call(**values)
+  File ""/app/main.py"", line 105, in translate_post
+    return await translate(**data)
+  File ""/app/main.py"", line 55, in translate
+    x = await async_client.post(BACKEND_URL+'/translate', json=data, timeout=3600)
+  File ""/usr/local/lib/python3.8/site-packages/http3/client.py"", line 392, in post
+    return await self.request(
+  File ""/usr/local/lib/python3.8/site-packages/http3/client.py"", line 541, in request
+    response = await self.send(
+  File ""/usr/local/lib/python3.8/site-packages/http3/client.py"", line 140, in send
+    response = await self.send_handling_redirects(
+  File ""/usr/local/lib/python3.8/site-packages/http3/client.py"", line 177, in send_handling_redirects
+    response = await self.dispatch.send(
+  File ""/usr/local/lib/python3.8/site-packages/http3/dispatch/connection_pool.py"", line 130, in send
+    raise exc
+  File ""/usr/local/lib/python3.8/site-packages/http3/dispatch/connection_pool.py"", line 120, in send
+    response = await connection.send(
+  File ""/usr/local/lib/python3.8/site-packages/http3/dispatch/connection.py"", line 59, in send
+    response = await self.h11_connection.send(request, timeout=timeout)
+  File ""/usr/local/lib/python3.8/site-packages/http3/dispatch/http11.py"", line 58, in send
+    http_version, status_code, headers = await self._receive_response(timeout)
+  File ""/usr/local/lib/python3.8/site-packages/http3/dispatch/http11.py"", line 130, in _receive_response
+    event = await self._receive_event(timeout)
+  File ""/usr/local/lib/python3.8/site-packages/http3/dispatch/http11.py"", line 161, in _receive_event
+    event = self.h11_state.next_event()
+  File ""/usr/local/lib/python3.8/site-packages/h11/_connection.py"", line 439, in next_event
+    exc._reraise_as_remote_protocol_error()
+  File ""/usr/local/lib/python3.8/site-packages/h11/_util.py"", line 72, in _reraise_as_remote_protocol_error
+    raise self
+  File ""/usr/local/lib/python3.8/site-packages/h11/_connection.py"", line 422, in next_event
+    self._process_event(self.their_role, event)
+  File ""/usr/local/lib/python3.8/site-packages/h11/_connection.py"", line 238, in _process_event
+    self._cstate.process_event(role, type(event), server_switch_event)
+  File ""/usr/local/lib/python3.8/site-packages/h11/_state.py"", line 238, in process_event
+    self._fire_event_triggered_transitions(role, event_type)
+  File ""/usr/local/lib/python3.8/site-packages/h11/_state.py"", line 251, in _fire_event_triggered_transitions
+    raise LocalProtocolError(
+h11._util.RemoteProtocolError: can't handle event type ConnectionClosed when role=SERVER and state=SEND_RESPONSE
+[2022-06-08 11:22:59 +0000] [16] [WARNING] Worker with pid 160 was terminated due to signal 9
+[2022-06-08 11:22:59 +0000] [962] [INFO] Booting worker with pid: 962
+[2022-06-08 11:23:19 +0000] [962] [INFO] Started server process [962]
+[2022-06-08 11:23:19 +0000] [962] [INFO] Waiting for application startup.
+[2022-06-08 11:23:19 +0000] [962] [INFO] Application startup complete.
+```
+I found similar PR in another library - https://github.com/encode/httpx/issues/1478 and found that you also use http3 in requirements.
+Can you help with this?",2022-06-08T11:51:36Z
+26,71,open,(Big) transformer Tatoeba models,"The current version does not support (big) transformer models from the Tatoeba Challenge provided on hugging face (https://huggingface.co/Helsinki-NLP/opus-mt-tc-big-fi-en), right? If not, do you plan to add those? This seems important to overcome strange translation behaviour (e.g. https://github.com/Helsinki-NLP/Opus-MT/issues/55). We encountered similar weird translations including repetitions of certain strings, some weird non related words added and suboptimal language detection especially for asian languages. 
+Thanks!",2022-06-07T09:59:20Z
+27,70,open,Do not translate word,"Is it possible to somehow indicate that a word shall not be translated with EasyNMT?
+
+Say that I have this string:
+
+```python
+my_string = ""Please do not translate this name: '$NAME' to german""
+```
+
+Is it possible to somehow tell EasyNMT that `'$NAME'` should not be translated? Google Translate API uses something like this to tell their API if something should be translated or not: `Please do not translate this name: <span class=”notranslate”>'$NAME'</span> to german`.
+One alternative to this is to split each string into different parts and translate the parts you need individually like so
+
+```python
+my_string_part_1 = ""Please do not translate this name: ""
+my_string_part_2 = ""'$NAME'""
+my_string_part_3 = ""to german""
+```
+
+But this might lead to more wonky sentences, I think.",2022-06-05T13:56:46Z
+28,68,open,Local/offline use of additional Opus-MT models,"For some reason, 'pt-en' is not included in EasyNMT as a valid Opus-MT language pair, even though there is a trained Opus-MT model for it. 
+
+I would like to be able to use this trained model. In trying to get this set up, I have taken the following steps:
+
+1. Copy the trained model to my local set-up, and place in directory structure as follows: 
+`modelcache/opus-mt/pt-en/opus-2019-12-05.zip`
+3. Copy the easynmt.json file from `http://easynmt.net/models/v2/opus-mt/ `, add the language pair 'pt-en' to the list, and save to the local `modelcache/opus-mt` folder
+4. Based on other comments here, try various versions of: 
+`model = EasyNMT(translator=models.AutoModel(""modelcache/""), cache_folder= ""modelcache"")`
+
+So far, no luck. It either tells me it can't load a config for modelcache, or it tells me pt-en is not a valid language pair.
+
+I feel like there must be something simple I'm missing or overlooking. Any help would be much appreciated!",2022-05-19T10:30:57Z
+29,17,open,Multi-process isn't working,"Hello guys, and thank you for your awesome library!
+I'm currently struggling with making test_multi_process_translation.py script working. When it comes to the multi-process part, the following error occures:
+
+`2021-03-04 19:00:46 | INFO | easynmt.EasyNMT | Start multi-process pool on devices: cuda:0
+Traceback (most recent call last):
+  File ""test_multi_process_translation.py"", line 80, in <module>
+    process_pool = model.start_multi_process_pool()
+  File ""/data/home/k.kirillova/anaconda/envs/fairseq/lib/python3.7/site-packages/easynmt/EasyNMT.py"", line 258, in start_multi_process_pool
+    p.start()
+  File ""/data/home/k.kirillova/anaconda/envs/fairseq/lib/python3.7/multiprocessing/process.py"", line 112, in start
+    self._popen = self._Popen(self)
+  File ""/data/home/k.kirillova/anaconda/envs/fairseq/lib/python3.7/multiprocessing/context.py"", line 284, in _Popen
+    return Popen(process_obj)
+  File ""/data/home/k.kirillova/anaconda/envs/fairseq/lib/python3.7/multiprocessing/popen_spawn_posix.py"", line 32, in __init__
+    super().__init__(process_obj)
+  File ""/data/home/k.kirillova/anaconda/envs/fairseq/lib/python3.7/multiprocessing/popen_fork.py"", line 20, in __init__
+    self._launch(process_obj)
+  File ""/data/home/k.kirillova/anaconda/envs/fairseq/lib/python3.7/multiprocessing/popen_spawn_posix.py"", line 47, in _launch
+    reduction.dump(process_obj, fp)
+  File ""/data/home/k.kirillova/anaconda/envs/fairseq/lib/python3.7/multiprocessing/reduction.py"", line 60, in dump
+    ForkingPickler(file, protocol).dump(obj)
+AttributeError: Can't pickle local object 'BaseFairseqModel.make_generation_fast_.<locals>.train'`
+
+Could you please give me any ideas on how to fix this? Thanks in advance!",2021-03-04T16:04:03Z
+30,64,open,cpu bottleneck : tokenization with a single worker,"Hi,
+I'm trying to use this to translate a few hundred millions of sentences.
+It seems like the tokenization is done in a single worker
+I see one core at 100% which seems to confirm this.
+Do you have solutions within this lib?",2022-05-10T21:41:42Z
+31,63,open,i suggest you add the tatoeba challenge models.,"they aren't there, or i just don't know how to enable that.",2022-04-10T13:43:13Z
+32,62,open,Model with Docker Image,"Is possible to choose model with Docker Image? The language I need is in the m2m model, but the image defaults to the opus-mt model.",2022-04-01T13:15:18Z
+33,61,open,some questions,"hi, sorry for my bad English
+I have some questions, I hope you will answer them:
+1. if I use python IDLE (short for Integrated Development and Learning Environment) the download for new Models, it ""stuck"" at 1kbps, and when downloading about more than 20%, the program takes quite a lot of resources (RAM and CPU) when downloading the module, but if you run it using windows CMD the problem does not exist, can you examine about this?
+2. this software load about 1.8GB of data to the RAM, but something I don't understand is: why you still need the internet connection if you have 1.8GB of data in your RAM?
+3. I used the default model (it is called ""opus mt"" if I am not wrong), that model is capable to translate 186 languages, if I calculate 1.8GB/186 language; each language require about 10Mb of ram, can we just load only a specific language like English to French or English to German, I think we can make this software work only with 20Mb of RAM
+
+thank you for reading, and the great works, have a nice day",2022-03-29T06:07:02Z
+34,52,open,Offline installation,"I am trying to install easyNMT on a semi-offline system. Python libraries are permitted to be installed but accessing other URLs is not permitted from this system. Therefore, can you advise on a way of how to manually install the Facebook (m2m_100_418M and m2m_100_1.2B) models so that easyNMT can see them? I can see they can be manually downloaded from Huggingface.co. If I were to download these on a second system, where should I then save them on the semi-offline Windows system on which I intend to test eastNMT? Thanks",2021-10-20T11:56:30Z
+35,44,open,It keeps on downloading the models again and again when start a new operation. ,,2021-07-29T09:53:17Z
+36,42,open,How to load the translation model in a custom location?,"Hi, I want to load the 300MB translation model in a different directory, let's say in my program folder instead of in the python/huggingface/pytorch folder. Is there any way I can do this? Thanks",2021-07-28T03:52:47Z
+37,48,open,Exception: 404 Client Error: Not Found for url: https://huggingface.co/api/models/Helsinki-NLP/opus-mt-ro-en,"Hi,
+
+I'm using EasyNMT for translating customer reviews. During translation, I got this error
+HTTPError: 404 Client Error: Not Found for url: https://huggingface.co/api/models/Helsinki-NLP/opus-mt-ro-en
+`HTTPError                                 Traceback (most recent call last)
+<ipython-input-25-155f54e8c6a3> in <module>
+      1 for index, row in df_review['AnswerValue'].iteritems():
+----> 2     translated_row = model.translate(row, target_lang='en')#translating each row
+      3     df_review.loc[index, 'Translate'] = translated_row
+
+~/opt/anaconda3/lib/python3.8/site-packages/easynmt/EasyNMT.py in translate(self, documents, target_lang, source_lang, show_progress_bar, beam_size, batch_size, perform_sentence_splitting, paragraph_split, sentence_splitter, document_language_detection, **kwargs)
+    152                 except Exception as e:
+    153                     logger.warning(""Exception: ""+str(e))
+--> 154                     raise e
+    155 
+    156             if is_single_doc and len(output) == 1:
+
+~/opt/anaconda3/lib/python3.8/site-packages/easynmt/EasyNMT.py in translate(self, documents, target_lang, source_lang, show_progress_bar, beam_size, batch_size, perform_sentence_splitting, paragraph_split, sentence_splitter, document_language_detection, **kwargs)
+    147                     method_args['documents'] = [documents[idx] for idx in ids]
+    148                     method_args['source_lang'] = lng
+--> 149                     translated = self.translate(**method_args)
+    150                     for idx, translated_sentences in zip(ids, translated):
+    151                         output[idx] = translated_sentences
+
+~/opt/anaconda3/lib/python3.8/site-packages/easynmt/EasyNMT.py in translate(self, documents, target_lang, source_lang, show_progress_bar, beam_size, batch_size, perform_sentence_splitting, paragraph_split, sentence_splitter, document_language_detection, **kwargs)
+    179             #logger.info(""Translate {} sentences"".format(len(splitted_sentences)))
+    180 
+--> 181             translated_sentences = self.translate_sentences(splitted_sentences, target_lang=target_lang, source_lang=source_lang, show_progress_bar=show_progress_bar, beam_size=beam_size, batch_size=batch_size, **kwargs)
+    182 
+    183             # Merge sentences back to documents
+
+~/opt/anaconda3/lib/python3.8/site-packages/easynmt/EasyNMT.py in translate_sentences(self, sentences, target_lang, source_lang, show_progress_bar, beam_size, batch_size, **kwargs)
+    276 
+    277             for start_idx in iterator:
+--> 278                 output.extend(self.translator.translate_sentences(sentences_sorted[start_idx:start_idx+batch_size], source_lang=source_lang, target_lang=target_lang, beam_size=beam_size, device=self.device, **kwargs))
+    279 
+    280             #Restore original sorting of sentences
+
+~/opt/anaconda3/lib/python3.8/site-packages/easynmt/models/OpusMT.py in translate_sentences(self, sentences, source_lang, target_lang, device, beam_size, **kwargs)
+     38     def translate_sentences(self, sentences: List[str], source_lang: str, target_lang: str, device: str, beam_size: int = 5, **kwargs):
+     39         model_name = 'Helsinki-NLP/opus-mt-{}-{}'.format(source_lang, target_lang)
+---> 40         tokenizer, model = self.load_model(model_name)
+     41         model.to(device)
+     42 
+
+~/opt/anaconda3/lib/python3.8/site-packages/easynmt/models/OpusMT.py in load_model(self, model_name)
+     20         else:
+     21             logger.info(""Load model: ""+model_name)
+---> 22             tokenizer = MarianTokenizer.from_pretrained(model_name)
+     23             model = MarianMTModel.from_pretrained(model_name)
+     24             model.eval()
+
+~/opt/anaconda3/lib/python3.8/site-packages/transformers/tokenization_utils_base.py in from_pretrained(cls, pretrained_model_name_or_path, *init_inputs, **kwargs)
+   1645         else:
+   1646             # At this point pretrained_model_name_or_path is either a directory or a model identifier name
+-> 1647             fast_tokenizer_file = get_fast_tokenizer_file(
+   1648                 pretrained_model_name_or_path, revision=revision, use_auth_token=use_auth_token
+   1649             )
+
+~/opt/anaconda3/lib/python3.8/site-packages/transformers/tokenization_utils_base.py in get_fast_tokenizer_file(path_or_repo, revision, use_auth_token)
+   3406     """"""
+   3407     # Inspect all files from the repo/folder.
+-> 3408     all_files = get_list_of_files(path_or_repo, revision=revision, use_auth_token=use_auth_token)
+   3409     tokenizer_files_map = {}
+   3410     for file_name in all_files:
+
+~/opt/anaconda3/lib/python3.8/site-packages/transformers/file_utils.py in get_list_of_files(path_or_repo, revision, use_auth_token)
+   1691     else:
+   1692         token = None
+-> 1693     model_info = HfApi(endpoint=HUGGINGFACE_CO_RESOLVE_ENDPOINT).model_info(
+   1694         path_or_repo, revision=revision, token=token
+   1695     )
+
+~/opt/anaconda3/lib/python3.8/site-packages/huggingface_hub/hf_api.py in model_info(self, repo_id, revision, token)
+    246         )
+    247         r = requests.get(path, headers=headers)
+--> 248         r.raise_for_status()
+    249         d = r.json()
+    250         return ModelInfo(**d)
+
+~/opt/anaconda3/lib/python3.8/site-packages/requests/models.py in raise_for_status(self)
+    941 
+    942         if http_error_msg:
+--> 943             raise HTTPError(http_error_msg, response=self)
+    944 
+    945     def close(self):
+
+HTTPError: 404 Client Error: Not Found for url: https://huggingface.co/api/models/Helsinki-NLP/opus-mt-ro-en`
+
+Could you please review and fix the issue?
+
+Thank you.",2021-08-30T06:56:03Z
+38,45,open,Chinese language variants,"EasyNMT uses fasttext to identify language. Some chinese phrases can be misidentified into chinese variants, like 'yue' or 'wuu'. This will cause easyNMT to fail. Can you map Chinese language variants to Chinese. 'yue', 'wuu', 'min' to 'zh'?  ",2021-08-03T23:00:00Z
+39,41,open,thai-segmenter not installed,"Running Thai verbatim through the pipeline gives an error ""ModuleNotFoundError: No module named 'thai_segmenter'.
+
+Does this need to be specified explicitly in setup.py?
+
+Thanks!
+
+",2021-07-09T20:22:07Z
+40,6,open,ROMANCE languages alias in OPUS-MT,"Hello, congrats for the initiative!
+
+I've been using Helsinking-NLP models previously and  most commonly used models are 'opus-mt-en-ROMANCE' and  'opus-mt-ROMANCE-en' for Portuguese. So, if I use `model.translate(sample, source_lang='pt', target_lang='en')`, it won't work, but as I've tested, `model.translate(sample, source_lang='ROMANCE', target_lang='en')` works.
+
+So, It would be nice to have some alias in the code for ROMANCE. :)",2021-01-29T18:03:59Z
+41,37,open,Unable to download Opus-MT,"I have been unabale to download opus-mt.
+
+Everytime i run: model = EasyNMT('opus-mt')
+after downloading 20%, the downloading speed reduces from 2Mbps to 1 kbps.",2021-05-26T18:24:51Z
+42,18,open,Query regarding the smaller size of models,"This is not an issue per se, but rather, a query.  Could you please elaborate on how the models provided in EasyNMT have been sized down to their current sizes (300MB for Opus-MT, 1.2 GB for mBART and 2.4 GB for the 1.2bn M2M-100)? 
+
+- The actual size of [M2M-100](https://github.com/pytorch/fairseq/tree/master/examples/m2m_100) is over 2.4 GB (the 12bn parameter M2M-100 checkpoint is close to 48GB!).
+- The actual size of  [mBART](https://github.com/pytorch/fairseq/tree/master/examples/mbart) appears to be about 5.2GB.
+
+If there is some model pruning or other downsizing techniques involved to reduce the size of the original models to their EasyNMT versions, how does it affect the performance of these models as compared to their original counterparts? 
+
+Thank you for your response in advance.",2021-03-09T11:58:23Z
+43,16,open,Repetition penalty,"Is there a way how to set ""temperature"" or ""repetition_penalty"" for Facebook models?",2021-03-02T15:02:58Z
+44,3,open,Permission Denied fairseq \ examples,"Hi,
+Thank you for the great library. Very useful. I tried to install in my machine and it landed up in error. Can you please let me know if i am missing anything,?
+ ERROR: Command errored out with exit status 1:
+   command: 'C:\Program Files\Anaconda\python.exe' 'C:\Program Files\Anaconda\lib\site-packages\pip\_vendor\pep517\_in_process.py' get_requires_for_build_wheel 'C:\Users\Public\Documents\Wondershare\CreatorTemp\tmp90q37bss'
+       cwd: C:\Users\Public\Documents\Wondershare\CreatorTemp\pip-install-zxfcubdl\fairseq
+  Complete output (31 lines):
+  Traceback (most recent call last):
+    File ""setup.py"", line 214, in <module>
+      do_setup(package_data)
+    File ""setup.py"", line 136, in do_setup
+      setup(
+    File ""C:\Users\Public\Documents\Wondershare\CreatorTemp\pip-build-env-hxrh3fi7\overlay\Lib\site-packages\setuptools\__init__.py"", line 152, in setup
+      _install_setup_requires(attrs)
+    File ""C:\Users\Public\Documents\Wondershare\CreatorTemp\pip-build-env-hxrh3fi7\overlay\Lib\site-packages\setuptools\__init__.py"", line 147, in _install_setup_requires
+      dist.fetch_build_eggs(dist.setup_requires)
+    File ""C:\Users\Public\Documents\Wondershare\CreatorTemp\pip-build-env-hxrh3fi7\overlay\Lib\site-packages\setuptools\build_meta.py"", line 60, in fetch_build_eggs
+      raise SetupRequirementsError(specifier_list)
+  setuptools.build_meta.SetupRequirementsError: ['cython', 'numpy', 'setuptools>=18.0']
+  
+  During handling of the above exception, another exception occurred:
+  
+  Traceback (most recent call last):
+    File ""C:\Program Files\Anaconda\lib\site-packages\pip\_vendor\pep517\_in_process.py"", line 280, in <module>
+      main()
+    File ""C:\Program Files\Anaconda\lib\site-packages\pip\_vendor\pep517\_in_process.py"", line 263, in main
+      json_out['return_val'] = hook(**hook_input['kwargs'])
+    File ""C:\Program Files\Anaconda\lib\site-packages\pip\_vendor\pep517\_in_process.py"", line 114, in get_requires_for_build_wheel
+      return hook(config_settings)
+    File ""C:\Users\Public\Documents\Wondershare\CreatorTemp\pip-build-env-hxrh3fi7\overlay\Lib\site-packages\setuptools\build_meta.py"", line 149, in get_requires_for_build_wheel
+      return self._get_build_requires(
+    File ""C:\Users\Public\Documents\Wondershare\CreatorTemp\pip-build-env-hxrh3fi7\overlay\Lib\site-packages\setuptools\build_meta.py"", line 130, in _get_build_requires
+      self.run_setup()
+    File ""C:\Users\Public\Documents\Wondershare\CreatorTemp\pip-build-env-hxrh3fi7\overlay\Lib\site-packages\setuptools\build_meta.py"", line 145, in run_setup
+      exec(compile(code, __file__, 'exec'), locals())
+    File ""setup.py"", line 217, in <module>
+      os.unlink(fairseq_examples)
+  PermissionError: [WinError 5] Access is denied: 'fairseq\\examples'
+  ----------------------------------------
+ERROR: Command errored out with exit status 1: 'C:\Program Files\Anaconda\python.exe' 'C:\Program Files\Anaconda\lib\site-packages\pip\_vendor\pep517\_in_process.py' get_requires_for_build_wheel 'C:\Users\Public\Documents\Wondershare\CreatorTemp\tmp90q37bss' Check the logs for full command output.
+",2021-01-28T14:02:02Z
+45,7,open,Some question about implementation of translate and translate_sentences in EasyNMT,"Hi, i review the code, and want to give some suggestions.
+As the code logic describe, if user not set source_lang in translate method, the object will 
+auto infer the possible source_lang in translate_sentences.
+This behaviour will have good conclusion when the input sentences are short,
+when it comes to long sentence, because the perform_sentence_splitting usage, will split the 
+totally long input sentence into small fragments and do source_lang infer on evey fragments
+and choose a good model to translate it (in grouped_sentences group by detected source_lang)
+it will suit some mix language input sentences, translate different language fragments
+by different model and join them back.
+but when the sentence_splitter unfortunate split the long input in bad manner,
+consider following example:
+```Python
+import pandas as pd
+input_ = 'How many times does the  rebuilt data contain cannot handle non-empty timestamp argument! 1929 and scrapped data contain cannot handle non-empty timestamp argument! 1954?'
+#### this output will be ['en', 'en', 'eo'] because the last fragment is ""1954?""
+#### and language_detection map it to ""eo""
+pd.Series(sentence_splitter(input_)).map(model.language_detection)
+```
+And when use it in opus-mt model, to translate this sentence from ""eo"" into ""zh""  this will yield a error that not have this model to load.
+I understand that i can avoid this error by set source_lang to ""en"" in translate method. 
+But i think also need deal with this problem.
+I think if the language_detection and sentence_splitter can run rapidly, can try to valid all possible translate-mapping in
+lang_pairs in easynmt.json in the opus-mt folder in the models dir before run translate method.
+Or becuse the last fragments is too short to give a good suggestion on language_detection, set a evidence filter on different
+length fragments.
+Or if you can use some regex (regular expression) to fllter out some symbols (in this example '?' in ""1954?"") or other bad tokens before input language_detection is more useful. And i think because the different format of our input, someone may input a html
+document into the translate method. It is useful to provide a interface let user set a token filter (filter ""?"" ""<\br>"" ) before language_detection.
+
+The above example is one sample i use to translate from a dataset, so when this error occured , i lost all previous translated conclusion because one Exception yield .  Because the truly translate is running in batch manner, People may want to maintain some success batches by set a small batch_size and a collection to collect success batches. I hope the future version will support collect success batches and not let all lost in the final output of translate method a long (in list measure or string measure) input of documents.  ",2021-01-30T07:40:45Z
