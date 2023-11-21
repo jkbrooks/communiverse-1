@@ -126,7 +126,7 @@ def main(path_to_save, path_to_spec_part, url_to_repo,
 
 if __name__ == '__main__':
     main('./test_repo', './test_repo/easynmt/', 'https://github.com/UKPLab/EasyNMT.git',
-        key = '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', path_to_src_file=None, persist_dir='./data',
+        key = '', path_to_src_file=None, persist_dir='./data',
         )
 
 

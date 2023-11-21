@@ -135,7 +135,7 @@ class RepoProcessor():
 
 
 if __name__ == '__main__':
-    RP = RepoProcessor('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')
+    RP = RepoProcessor('')
     RP.clone_repo(repo_url='https://github.com/neonbjb/tortoise-tts.git', path_to_save='test_repo')
     RP.load_doc_and_process('scripts', file_formats=['.py'], target_language='Python')
     RP.set_llm('gpt-3.5-turbo')
